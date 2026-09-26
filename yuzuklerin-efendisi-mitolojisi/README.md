@@ -11,6 +11,7 @@ Tolkien'in dünyasını **yaratılışın ilk anından** başlayarak, kronolojik
 
 | Dosya / klasör | İçerik |
 |---|---|
+| [`videolar/sezon-1/`](videolar/sezon-1/) | **Bitmiş videolar** (MP4, 1080×1920) ve kapak görselleri |
 | [`sezon-1/`](sezon-1/) | 14 bölümün senaryosu: seslendirme metni, sahne sahne görsel planı, ekran yazıları, AI görsel promptları, başlık/açıklama/hashtag, sabitlenecek yorum |
 | [`teleprompter/sezon-1/`](teleprompter/sezon-1/) | Yalnızca okunacak metin; kayıt sırasında telefondan okumak için |
 | [`uretim-rehberi.md`](uretim-rehberi.md) | Format, kayıt, görsel stil, karakter görünümleri, kurgu, müzik, telif, yayın stratejisi, kontrol listesi |
@@ -21,7 +22,7 @@ Tolkien'in dünyasını **yaratılışın ilk anından** başlayarak, kronolojik
 
 | # | Bölüm | Kanca | Süre* |
 |---|---|---|---|
-| 1 | [Evren Bir Şarkıyla Başladı](sezon-1/01-evren-bir-sarkiyla-basladi.md) | Her şey bir şarkıyla başladı | 2:12 |
+| 1 | [Evren Bir Şarkıyla Başladı](sezon-1/01-evren-bir-sarkiyla-basladi.md) · [🎬 video](videolar/sezon-1/01-evren-bir-sarkiyla-basladi.mp4) | Her şey bir şarkıyla başladı | 2:00 ✅ |
 | 2 | [Eä: Dünya Var Oluyor](sezon-1/02-ea-dunya-var-oluyor.md) | Şarkı → rüya → dünya | 2:10 |
 | 3 | [Valar: Orta Dünya'nın Tanrıları mı?](sezon-1/03-valar.md) | Frodo'nun çağırdığı "Elbereth" kim? | 2:11 |
 | 4 | [Gandalf ve Sauron Aynı Türden mi?](sezon-1/04-gandalf-ve-sauron-maiar.md) | Gandalf = Sauron = Balrog? | 2:08 |
