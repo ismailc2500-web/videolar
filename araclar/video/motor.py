@@ -359,12 +359,16 @@ def halka(taban, B, cu, cv, r, gen, renk, guc):
     taban[y0:y1, x0:x1] += np.exp(-(((d - r) / gen) ** 2))[..., None] * (renk * guc)
 
 
-def isinlar(taban, B, t, renk, guc, yaricap=0.25):
+def isinlar(taban, B, t, renk, guc, yaricap=0.25, merkez=None):
     if guc <= 0.002:
         return
-    th = B.TH
+    if merkez is None:
+        th, R = B.TH, B.R
+    else:
+        du, dv = B.U - merkez[0], B.V - merkez[1]
+        th, R = np.arctan2(dv, du), np.sqrt(du * du + dv * dv)
     ray = 0.6 * (0.5 + 0.5 * np.cos(9 * th + 0.12 * t)) ** 6 + 0.4 * (0.5 + 0.5 * np.cos(14 * th - 0.09 * t + 1.3)) ** 8
-    f = ray * np.exp(-B.R / yaricap) * np.clip(B.R / 0.03, 0, 1)
+    f = ray * np.exp(-R / yaricap) * np.clip(R / 0.03, 0, 1)
     taban += f[..., None] * (renk * guc)
 
 
@@ -372,7 +376,7 @@ def pikselle(u, v):
     return np.stack([W / 2 + u * H, H / 2 + v * H], -1)
 
 
-def parcaciklar(ayrinti, B, t, kip, renk, guc, adet=500, t0=0.0):
+def parcaciklar(ayrinti, B, t, kip, renk, guc, adet=500, t0=0.0, merkez=MERKEZ):
     if guc <= 0.01:
         return
     p = B.p
@@ -384,8 +388,8 @@ def parcaciklar(ayrinti, B, t, kip, renk, guc, adet=500, t0=0.0):
         vv = (v - 0.008 * hiz * t + 0.52) % 1.04 - 0.52
     elif kip == "disa":
         r = (0.03 + 0.06 * hiz * tl + faz / 6.28 * 0.55) % 0.62
-        uu = MERKEZ[0] + r * np.cos(faz * 7)
-        vv = MERKEZ[1] + r * np.sin(faz * 7)
+        uu = merkez[0] + r * np.cos(faz * 7)
+        vv = merkez[1] + r * np.sin(faz * 7)
         parla = parla * np.clip(1 - r / 0.62, 0, 1) * np.clip(r / 0.05, 0, 1)
     elif kip == "kor":
         vv = (v - 0.05 * hiz * t + 0.52) % 1.04 - 0.52
@@ -397,8 +401,8 @@ def parcaciklar(ayrinti, B, t, kip, renk, guc, adet=500, t0=0.0):
     else:  # sarmal
         r = 0.5 * ((faz / 6.28 - 0.05 * hiz * tl) % 1.0) + 0.02
         aci = faz * 5 + 1.8 * np.log(r + 0.01) * -1 + 0.3 * tl
-        uu = MERKEZ[0] + r * np.cos(aci)
-        vv = MERKEZ[1] + r * np.sin(aci) * 0.85
+        uu = merkez[0] + r * np.cos(aci)
+        vv = merkez[1] + r * np.sin(aci) * 0.85
         parla = parla * np.clip(r / 0.08, 0, 1)
     xy = pikselle(uu, vv)
     renk255 = renk * 255 * guc
@@ -505,12 +509,14 @@ def melkor(taban, ayrinti, B, t, guc, cu, ust, olcek=1.0, kor_guc=1.0):
         lekele(taban, cu + gx * olcek, ust + 0.036 * olcek, 0.0022 * olcek, 0.0014 * olcek, KOR, 7 * guc * kor_guc)
 
 
-def kure(taban, B, t, guc, r):
+def kure(taban, B, t, guc, r, merkez=MERKEZ):
     if guc <= 0.01:
         return
-    cu, cv = MERKEZ
-    x0, x1 = int(w / 2 + (cu - r * 1.4) * h), int(w / 2 + (cu + r * 1.4) * h)
-    y0, y1 = int(h / 2 + (cv - r * 1.4) * h), int(h / 2 + (cv + r * 1.4) * h)
+    cu, cv = merkez
+    x0, x1 = max(0, int(w / 2 + (cu - r * 1.4) * h)), min(w, int(w / 2 + (cu + r * 1.4) * h))
+    y0, y1 = max(0, int(h / 2 + (cv - r * 1.4) * h)), min(h, int(h / 2 + (cv + r * 1.4) * h))
+    if x1 <= x0 or y1 <= y0:
+        return
     uu = (B.U[y0:y1, x0:x1] - cu) / r
     vv = (B.V[y0:y1, x0:x1] - cv) / r
     d2 = uu * uu + vv * vv
@@ -540,12 +546,13 @@ class Cizer:
         yz = Yazici(font_klasoru)
         vurgu = set(bolum.get("vurgu", []))
         self.m = importlib.import_module(f"sahneler_b{bolum['bolum']:02d}")
+        self.kanca_bitis = self.z.e(0, bolum["sahneler"][0].get("ekran_bitis_cumle", 0)) + 0.3
         self.basliklar = []
         for i, s in enumerate(bolum["sahneler"]):
             if any(s.get("ekran", [])):
                 if i == 0:
                     img = yz.baslik([(s["ekran"][0], "buyuk"), (s["ekran"][1], "buyuk")])
-                    self.basliklar.append((0.25, self.z.e(0, 0) + 0.3, img, 0.215))
+                    self.basliklar.append((0.25, self.kanca_bitis, img, 0.215))
                 else:
                     t_on = self.z.c(i, s.get("ekran_cumle", 0)) - 0.15
                     if "sert_gecis" in s:
@@ -593,7 +600,7 @@ class Cizer:
             if a > 0:
                 yukselis = 14 * (1 - puruzsuz((t - t_on) / 0.8))
                 bindir(kare, img, y * H + yukselis, a)
-        bindir(kare, self.etiket, 0.125 * H, pencere(t, 0.25, z.e(0, 0) + 0.3, 0.5) * 0.85)
+        bindir(kare, self.etiket, 0.125 * H, pencere(t, 0.25, self.kanca_bitis, 0.5) * 0.85)
         son = pencere(t, z.kapanis, z.sure + 1, 0.6)
         if son > 0:
             bindir(kare, self.etiket, 0.125 * H, son * 0.85)

@@ -287,7 +287,245 @@ def bolum01(p, z):
     p.ekle(sahne_bit[7] + 0.25, can(hz("D6"), 3.5), kazanc=0.05)
 
 
-BOLUMLER = {1: bolum01}
+# ---------------------------------------------------------------- ek çalgılar (Bölüm 2+)
+
+def ors(f=880.0, sure=1.6):
+    n = int(sure * SR)
+    t = np.arange(n, dtype=np.float32) / SR
+    x = np.zeros(n, np.float32)
+    for oran, g, tau in [(1, 1.0, 0.7), (2.76, 0.6, 0.45), (5.40, 0.4, 0.25), (8.93, 0.25, 0.15), (13.3, 0.12, 0.08)]:
+        x += g * np.exp(-t / tau) * np.sin(2 * np.pi * f * oran * t)
+    x += suzgec(gurultu(sure), 3000, "high") * np.exp(-t / 0.02) * 0.8
+    return x * zarf(n, 0.001, 0.05)
+
+
+def ruzgar_ses(sure, parlaklik=900):
+    n = int(sure * SR)
+    x = gurultu(sure)
+    parcalar = np.array_split(x, 40)
+    t = np.linspace(0, 1, 40)
+    cikti = [suzgec(suzgec(p, 250 + parlaklik * (0.6 + 0.4 * np.sin(6 * ti)), "low"), 150, "high") for p, ti in zip(parcalar, t)]
+    x = np.concatenate(cikti)
+    return x * (0.6 + 0.4 * np.sin(np.linspace(0, 3 * np.pi, n))) * zarf(n, sure * 0.3, sure * 0.3)
+
+
+def dalga_ses(sure):
+    n = int(sure * SR)
+    t = np.arange(n, dtype=np.float32) / SR
+    x = suzgec(gurultu(sure), 700)
+    return x * (0.35 + 0.65 * (0.5 + 0.5 * np.sin(2 * np.pi * 0.14 * t)) ** 2) * zarf(n, 1.0, 1.5)
+
+
+def flut(f, sure, atak=0.12, birakma=0.5):
+    n = int(sure * SR)
+    t = np.arange(n, dtype=np.float32) / SR
+    vib = 1 + 0.006 * np.sin(2 * np.pi * 5.2 * t) * np.clip(t / 0.4, 0, 1)
+    faz = 2 * np.pi * f * np.cumsum(vib) / SR
+    x = np.sin(faz) + 0.25 * np.sin(2 * faz) + 0.08 * np.sin(3 * faz)
+    x += 0.05 * suzgec(gurultu(sure), 3000) 
+    return x * zarf(n, atak, min(birakma, sure / 2))
+
+
+def boru(f, sure, atak=0.5, birakma=1.2):
+    h = [1 / k ** 0.9 / (1 + (k * f / 1100) ** 2) for k in range(1, 20)]
+    x = toplamsal(f, sure, h, sapma_cent=(-5, 0, 5), vibrato=0.002, vib_hiz=4.5)
+    return np.tanh(1.5 * x) * zarf(len(x), atak, birakma)
+
+
+def davul(f0=95.0, sure=0.9):
+    return gumbur(sure, f0, 42.0) * zarf(int(sure * SR), 0.002, 0.3)
+
+
+def zil(sure=3.0):
+    n = int(sure * SR)
+    t = np.arange(n, dtype=np.float32) / SR
+    return suzgec(gurultu(sure), 5000, "high") * np.exp(-t / 0.9)
+
+
+# ---------------------------------------------------------------- Bölüm 2
+
+def bolum02(p, z):
+    birim = z["birimler"]
+
+    def c(sahne, cumle=0):
+        return next(b["bas"] for b in birim if b["sahne"] == sahne and b["cumle"] == cumle)
+
+    bit = [s["bit"] for s in z["sahneler"]]
+    son = z["sure"]
+
+    # 0 · Şarkı → rüya → dünya
+    for j, ad in enumerate(["A4", "D5", "E5", "F#5"]):
+        p.ekle(0.1 + j * 0.45, can(hz(ad), 3.0), pan=0.3 * (j - 1.5) / 1.5, kazanc=0.08)
+    akor(p, 0.0, c(0, 1) + 1.0, ["D3", "A3", "D4", "F#4"], koro, 0.06)
+    p.ekle(0.0, ped(hz("D2"), c(0, 1) + 1.5, 600), kazanc=0.12)
+    akor(p, c(0, 1) - 0.3, 4.0, ["D3", "A3", "E4", "F#4", "C#5"], ped, 0.04)
+    gercek = c(0, 2) + 1.5
+    p.ekle(gercek - 1.4, yukselen(1.35), kazanc=0.08)
+    p.ekle(gercek, gumbur(3.5, 110, 35), kazanc=0.45)
+    akor(p, gercek, bit[0] - gercek + 3.0, ["D2", "A2", "D3", "F#3", "A3", "D4"], ped, 0.06)
+    akor(p, gercek, bit[0] - gercek + 3.0, ["A4", "D5", "F#5"], koro, 0.04)
+
+    # 1 · Görü: hayranlık
+    t = c(1, 0) - 0.4
+    ilerleme = [["B2", "F#3", "A3", "C#4", "D4"], ["G2", "D3", "F#3", "B3", "D4"],
+                ["F#2", "D3", "A3", "D4"], ["A2", "E3", "A3", "C#4", "E4"]]
+    uz = (bit[1] - t + 0.6) / len(ilerleme)
+    for i, nt in enumerate(ilerleme):
+        akor(p, t + i * uz, uz + 1.5, nt, ped, 0.05)
+        akor(p, t + i * uz, uz + 1.5, nt[-2:], koro, 0.03)
+    k = t + 0.5
+    arp = ["D5", "F#5", "A5", "C#6", "B5", "A5", "F#5", "E5"]
+    i = 0
+    while k < bit[1]:
+        p.ekle(k, can(hz(arp[i % 8]), 2.0), pan=0.5 * np.sin(i), kazanc=0.022 + 0.012 * (k > c(1, 2)))
+        k += 0.45
+        i += 1
+
+    # 2 · Ilúvatar'ın Çocukları: flüt teması; sonunda Melkor'un kıskançlığı
+    t = c(2, 0) - 0.3
+    akor(p, t, c(2, 1) - t + 0.5, ["D3", "A3", "D4"], ped, 0.04)
+    melodi = [("D5", 0.6), ("E5", 0.4), ("F#5", 0.9), ("A5", 0.6), ("B5", 0.5), ("A5", 0.4), ("F#5", 0.9),
+              ("E5", 0.6), ("D5", 0.5), ("E5", 0.4), ("F#5", 0.8), ("D5", 1.6)]
+    k = c(2, 1)
+    for ad, d in melodi:
+        if k > c(2, 4) - 0.3:
+            break
+        p.ekle(k, flut(hz(ad), d + 0.25), pan=-0.15, kazanc=0.055)
+        k += d
+    for i, nt in enumerate([["D3", "A3", "F#4"], ["B2", "F#3", "D4"], ["G2", "D3", "B3"], ["A2", "E3", "C#4"]]):
+        tt = c(2, 1) + i * 2.3
+        if tt > c(2, 4) - 0.5:
+            break
+        akor(p, tt, 2.8, nt, ped, 0.05)
+        for j, ad in enumerate(nt):
+            p.ekle(tt + j * 0.12, can(hz(ad) * 2, 1.4), pan=0.4, kazanc=0.025)
+    akor(p, c(2, 3) - 0.2, c(2, 4) - c(2, 3) + 0.4, ["D4", "F#4", "A4", "D5"], koro, 0.045)
+    t = c(2, 4)
+    p.ekle(t, gumbur(2.5, 80, 32), kazanc=0.35)
+    for ad in ["D2", "Eb2", "A2"]:
+        p.ekle(t, sert(hz(ad), bit[2] - t + 1.2, atak=0.05, birakma=1.0, tremolo=5), kazanc=0.04)
+
+    # 3 · Unsurlar
+    for j, ad in enumerate(["D5", "A5", "F#5"]):
+        p.ekle(c(3, 0) + 0.6 + j * 0.8, can(hz(ad), 2.5), pan=(j - 1) * 0.6, kazanc=0.05)
+    akor(p, c(3, 0), c(3, 1) - c(3, 0) + 0.5, ["D3", "A3", "D4", "E4"], ped, 0.045)
+    t = c(3, 1) - 0.3
+    p.ekle(t, dalga_ses(c(3, 2) - t + 1.0), kazanc=0.10)
+    p.ekle(t, ped(hz("D1"), c(3, 2) - t + 0.8, 250), kazanc=0.20)
+    akor(p, t, c(3, 2) - t + 0.8, ["D2", "A2", "D3"], ped, 0.05)
+    p.ekle(c(3, 1) + 1.0, boru(hz("D3"), 1.8), kazanc=0.07)
+    p.ekle(c(3, 1) + 1.0, boru(hz("A3"), 1.8), kazanc=0.05)
+    t = c(3, 2) - 0.3
+    p.ekle(t, ruzgar_ses(c(3, 3) - t + 0.8), kazanc=0.12)
+    akor(p, t, c(3, 3) - t + 0.8, ["A4", "D5", "E5", "A5"], koro, 0.04)
+    t = c(3, 3) - 0.3
+    akor(p, t, c(3, 4) - t + 0.6, ["D2", "A2", "F#3"], ped, 0.05)
+    for n in range(4):
+        vurus = c(3, 3) + n * 1.1 + 0.62 * 1.1
+        if vurus < c(3, 4) + 0.4:
+            p.ekle(vurus, ors(), pan=0.3, kazanc=0.10)
+            p.ekle(vurus, davul(120, 0.5), kazanc=0.25)
+    t = c(3, 4) - 0.2
+    p.ekle(t, ruzgar_ses(c(3, 5) - t + 1.5, 1600), kazanc=0.12)
+    for ad in ["E6", "F6", "B5", "C6"]:
+        p.ekle(t, sert(hz(ad), c(3, 5) - t + 0.4, atak=1.0, birakma=0.6, tremolo=9), pan=RNG.uniform(-0.7, 0.7), kazanc=0.006)
+    p.ekle(t, ped(hz("D1"), c(3, 5) - t + 0.5, 200), kazanc=0.18)
+    t = c(3, 5)
+    akor(p, t, c(3, 6) - t + 0.6, ["D3", "A3", "C#4", "F#4"], ped, 0.045)
+    for j, ad in enumerate(["D6", "F#6", "A6", "C#7", "D7", "A6", "F#6", "E6", "D6", "A5"]):
+        p.ekle(t + 0.3 + j * 0.34, can(hz(ad), 2.2), pan=0.5 * np.sin(j * 1.3), kazanc=0.03)
+    t = c(3, 6)
+    akor(p, t, bit[3] - t + 1.5, ["G2", "D3", "B3", "D4"], ped, 0.065)
+    akor(p, t + 2.2, bit[3] - t - 0.5, ["D3", "A3", "D4", "F#4"], koro, 0.06)
+    p.ekle(t + 0.5, boru(hz("D3"), 2.5, atak=0.8), kazanc=0.05)
+
+    # 4 · Görü kayboluyor
+    an = c(4, 0) + 1.6
+    p.ekle(an - 1.2, yukselen(1.15), kazanc=0.06)
+    p.ekle(an, zil(2.5), kazanc=0.05)
+    p.ekle(an, gumbur(2.0, 70, 30), kazanc=0.25)
+    t = an + 0.4
+    p.ekle(t, ped(hz("D1"), bit[4] - t + 1.5, 200), kazanc=0.10)
+    p.ekle(t, ped(hz("Eb1"), bit[4] - t + 1.5, 200), kazanc=0.05)
+    akor(p, c(4, 2) - 0.3, bit[4] - c(4, 2) + 1.5, ["A2", "D3", "E3", "A3"], ped, 0.04)
+    for k in np.arange(c(4, 2), bit[4], 1.4):
+        p.ekle(k, nabiz(), kazanc=0.15)
+
+    # 5 · Eä!
+    ea = c(5, 1)
+    p.ekle(c(5, 0) + 0.3, saf(hz("A6"), ea - c(5, 0), atak=1.5, birakma=0.2), kazanc=0.02)
+    p.ekle(ea - 2.2, yukselen(2.15), kazanc=0.12)
+    p.ekle(ea, gumbur(5.0, 120, 28), kazanc=0.7)
+    p.ekle(ea, zil(3.5), kazanc=0.08)
+    for ad in ["D1", "D2", "A2", "D3", "F#3", "A3", "D4", "F#4", "A4", "D5"]:
+        f = hz(ad)
+        p.ekle(ea, ped(f, 7.0, 3200) * zarf(int(7.0 * SR), 0.02, 5.5, 1.5), pan=RNG.uniform(-0.8, 0.8), kazanc=0.06)
+        if f > 140:
+            p.ekle(ea, koro(f, 6.5, atak=0.05, birakma=5.0), pan=RNG.uniform(-0.8, 0.8), kazanc=0.045)
+    for j in range(24):
+        p.ekle(ea + 0.3 + j * 0.13 + RNG.uniform(0, 0.08), can(hz(["D6", "F#6", "A6", "E6"][j % 4]), 1.8),
+               pan=RNG.uniform(-0.9, 0.9), kazanc=0.018)
+    akor(p, c(5, 3) - 0.3, bit[5] - c(5, 3) + 1.5, ["D3", "A3", "D4", "F#4", "A4"], ped, 0.045)
+    akor(p, c(5, 3), bit[5] - c(5, 3) + 1.2, ["F#5", "A5"], koro, 0.03)
+
+    # 6 · Valar iniyor: kahramanca tema
+    t = c(6, 0) - 0.4
+    ilerleme = [["D2", "A2", "D3", "F#3"], ["G2", "D3", "G3", "B3"], ["A2", "E3", "A3", "C#4"], ["D2", "A2", "D3", "F#3"]]
+    uz = (c(6, 3) - t) / len(ilerleme)
+    for i, nt in enumerate(ilerleme):
+        akor(p, t + i * uz, uz + 1.0, nt, ped, 0.065)
+        for ad in nt[1:]:
+            p.ekle(t + i * uz, boru(hz(ad), uz + 0.8), pan=RNG.uniform(-0.5, 0.5), kazanc=0.032)
+    for i in range(5):
+        inis = c(6, 0) + 0.3 + i * 0.45 + 0.7
+        p.ekle(inis, can(hz(["D5", "F#5", "A5", "D6", "F#6"][i]), 2.5), pan=(i - 2) * 0.3, kazanc=0.05)
+        p.ekle(inis, davul(100, 0.7), kazanc=0.18)
+    akor(p, c(6, 2) - 0.2, 3.5, ["D4", "F#4", "A4", "D5"], koro, 0.05)
+    akor(p, c(6, 3), c(6, 4) - c(6, 3) + 0.5, ["B1", "F#2", "B2", "D3"], ped, 0.05)
+    t = c(6, 4)
+    yuk = [["G2", "D3", "G3", "B3"], ["A2", "E3", "A3", "C#4"], ["B2", "F#3", "B3", "D4"], ["D3", "A3", "D4", "F#4"]]
+    uz = (bit[6] - t + 0.6) / len(yuk)
+    for i, nt in enumerate(yuk):
+        akor(p, t + i * uz, uz + 1.0, nt, ped, 0.05 + 0.01 * i)
+        akor(p, t + i * uz, uz + 1.0, nt[-2:], koro, 0.035 + 0.008 * i)
+    for k in np.arange(t, bit[6] + 0.3, 0.5):
+        p.ekle(k, davul(90, 0.5), kazanc=0.10 + 0.12 * (k - t) / (bit[6] - t + 0.3))
+
+    # 7 · Melkor geliyor
+    t = c(7, 0) - 0.3
+    p.ekle(t, gumbur(4.0, 70, 26), kazanc=0.55)
+    p.ekle(t, ped(hz("D1"), son - t, 220), kazanc=0.11)
+    for ad in ["D2", "Eb2", "Ab2"]:
+        p.ekle(t, sert(hz(ad), c(7, 2) - t + 0.6, atak=0.8, birakma=0.8, tremolo=4), pan=RNG.uniform(-0.6, 0.6), kazanc=0.03)
+    for k in np.arange(t + 0.8, c(7, 2), 0.8):
+        p.ekle(k, davul(80, 0.8), kazanc=0.15)
+    p.ekle(c(7, 1), gumbur(2.0, 90, 40), kazanc=0.3)
+    t = c(7, 2)
+    akor(p, t, 2.8, ["G2", "D3", "G3", "B3", "D4"], ped, 0.045)
+    akor(p, t + 2.8, c(7, 3) - t - 2.4, ["A2", "E3", "A3", "C#4", "E4"], ped, 0.045)
+    p.ekle(t + 0.2, boru(hz("G3"), 2.6), kazanc=0.03)
+    p.ekle(t + 2.9, boru(hz("A3"), 2.6), kazanc=0.03)
+    boz = c(7, 3)
+    for n in range(2):
+        t0 = boz + n * 1.2
+        p.ekle(t0, can(hz("D5"), 1.5), kazanc=0.05)
+        p.ekle(t0 + 0.6, gumbur(1.8, 100, 35), kazanc=0.45)
+        p.ekle(t0 + 0.6, suzgec(gurultu(1.2), 900) * np.exp(-np.arange(int(1.2 * SR)) / SR / 0.3), kazanc=0.12)
+    t = c(7, 4)
+    for k in np.arange(t, c(7, 5) + 0.4, 0.25):
+        p.ekle(k, davul(110 if int((k - t) / 0.25) % 2 else 80, 0.4), kazanc=0.13)
+    for ad in ["D3", "Eb3", "A3", "D4"]:
+        p.ekle(t, sert(hz(ad), c(7, 5) - t + 0.3, atak=0.02, birakma=0.3), pan=RNG.uniform(-0.6, 0.6), kazanc=0.03)
+    akor(p, t, c(7, 5) - t + 0.3, ["D4", "F#4", "A4"], koro, 0.05)
+    t = c(7, 5)
+    akor(p, t, son - t, ["D3", "A3", "D4", "F#4", "A4"], ped, 0.05)
+    akor(p, t + 1.0, son - t - 1.0, ["A4", "D5"], koro, 0.03)
+    for j, ad in enumerate(["A4", "D5", "E5", "F#5", "A5", "F#5", "E5", "D5"]):
+        p.ekle(t + 0.4 + j * 0.55, can(hz(ad), 2.6), pan=0.3 * np.sin(j), kazanc=0.04)
+    p.ekle(z["birimler"][-1]["bit"] + 0.2, can(hz("D6"), 3.0), kazanc=0.05)
+
+
+BOLUMLER = {1: bolum01, 2: bolum02}
 
 
 def main():

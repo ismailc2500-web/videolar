@@ -10,7 +10,7 @@ import math
 import cv2
 import numpy as np
 
-from motor import H, W, h, lekele, pikselle, w
+from motor import H, W, h, lekele, w
 
 GOK_MAVI = np.array([0.45, 0.70, 1.0], np.float32)
 DENIZ_YESIL = np.array([0.30, 0.95, 0.85], np.float32)
@@ -19,6 +19,7 @@ KIZIL = np.array([1.0, 0.09, 0.03], np.float32)
 SICAK = np.array([1.0, 0.88, 0.70], np.float32)
 AY_ISIGI = np.array([0.70, 0.82, 1.0], np.float32)
 BUZ = np.array([0.75, 0.92, 1.0], np.float32)
+BEYAZ_KOPUK = np.array([0.85, 1.0, 1.0], np.float32)
 
 
 def bezier(p0, p1, p2, p3, n=16):
@@ -98,7 +99,7 @@ def isle(taban, kalem, kenar_renk, isik=(-0.6, -0.8), guc=1.0, dolgu=(0.015, 0.0
     bolge *= (1 - m * guc * opaklik)[..., None]
     bolge += m[..., None] * np.asarray(dolgu, np.float32) * guc
     ince = cv2.GaussianBlur(yonlu * 2.4 + kenar * 0.06, (0, 0), 0.7)
-    ic = cv2.GaussianBlur(yonlu, (0, 0), 4) * m * 0.9
+    ic = cv2.GaussianBlur(yonlu, (0, 0), 2.5) * m * 0.6
     dis = cv2.GaussianBlur(yonlu, (0, 0), 7) * (1 - m) * 0.7
     bolge += (ince + ic + dis)[..., None] * renk * guc * kenar_guc
 
@@ -233,42 +234,66 @@ def ainu(taban, u, v, boy, t, renk, guc=1.0, faz=0.0, kollar=0.0, hale=True):
         lekele(taban, u, v - 0.91 * boy, 0.015 * boy, 0.015 * boy, SICAK, 2.0 * guc)
 
 
+def detay(taban, kalem, cizgiler, renk, guc, kalinlik=1):
+    """Siluetin içine ince ışık çizgileri (sakal, zırh, kıvrım) çizer."""
+    if guc <= 0.01:
+        return
+    m = np.zeros((h, w), np.uint8)
+    for pts in cizgiler:
+        cv2.polylines(m, [np.int32(kalem.px(pts) * 16)], False, 255, kalinlik, cv2.LINE_AA, 4)
+    x0, y0, x1, y1 = kalem.kirp()
+    c = m[y0:y1, x0:x1].astype(np.float32) / 255.0
+    parilti = cv2.GaussianBlur(c, (0, 0), 0.8) * 0.9 + cv2.GaussianBlur(c, (0, 0), 3) * 0.5
+    taban[y0:y1, x0:x1] += parilti[..., None] * np.asarray(renk, np.float32) * guc
+
+
+def dalga_tepesi(cx, taban_y, boy, yon):
+    return (bezier((cx - 0.016, taban_y), (cx - 0.02, taban_y - boy * 0.6), (cx + 0.004 * yon, taban_y - boy),
+                   (cx + 0.024 * yon, taban_y - boy * 0.82), 10)
+            + bezier((cx + 0.024 * yon, taban_y - boy * 0.82), (cx + 0.012 * yon, taban_y - boy * 0.72),
+                     (cx + 0.010, taban_y - boy * 0.4), (cx + 0.016, taban_y), 10))
+
+
 def ulmo(taban, u, v, boy, t, guc=1.0, boynuz=1.0):
-    """Denizden yükselen dev. v: su çizgisi; yerel su çizgisi y = -0.42."""
+    """Denizden yükselen soylu deniz kralı. v: su çizgisi; yerel su çizgisi y = -0.42."""
     k = Kalem(u, v - (-0.42) * boy, boy)
     su = -0.42
-    dl = [0.012 * math.sin(1.2 * t + i * 0.9) for i in range(8)]
-    k.elips(0, -0.895, 0.056, 0.068)
-    for i, a in enumerate(np.linspace(-0.9, 0.9, 5)):
-        bx, by = math.sin(a) * 0.05, -0.935 - math.cos(a) * 0.015
-        uc = (bx + math.sin(a) * 0.04, by - 0.07 - 0.02 * math.cos(a))
-        kivrim = (uc[0] + 0.03 * (1 if a >= 0 else -1), uc[1] + 0.03)
-        k.konik(bezier((bx, by), (bx + math.sin(a) * 0.02, by - 0.05), uc, kivrim, 12), 0.018, 0.004)
-    for s in (-1, 1):
-        uzuv(k, [(0.045 * s, -0.93), (0.13 * s + dl[0], -0.85), (0.16 * s + dl[1], -0.66), (0.20 * s + dl[2], su)],
-             0.035, 0.02)
-    k.poligon(bezier((-0.045, -0.87), (-0.07, -0.76), (-0.04 + dl[3], -0.62), (0.0 + dl[4], -0.54), 10)
-              + bezier((0.0 + dl[4], -0.54), (0.03 + dl[3], -0.62), (0.07, -0.76), (0.045, -0.87), 10))
-    sag = (bezier((0.03, -0.82), (0.12, -0.83), (0.23, -0.80), (0.26, -0.73), 8)
-           + bezier((0.26, -0.73), (0.25, -0.62), (0.21, -0.52), (0.20, su - 0.02), 8))
+    dl = [0.010 * math.sin(1.3 * t + i * 0.9) for i in range(8)]
+    k.elips(0, -0.902, 0.047, 0.060)
+    for cx, yuk, yon in ((-0.032, 0.045, -1), (0.0, 0.072, 1), (0.032, 0.045, 1)):
+        k.poligon(dalga_tepesi(cx, -0.945, yuk, yon))
+    k.poligon([(-0.05, -0.95), (0.05, -0.95), (0.052, -0.935), (-0.052, -0.935)])
+    for s_ in (-1, 1):
+        k.poligon([(0.042 * s_, -0.935)] + bezier((0.055 * s_, -0.91), (0.066 * s_ + dl[0], -0.87),
+                                                   (0.072 * s_ + dl[1], -0.83), (0.068 * s_ + dl[2], -0.795), 8)
+                  + bezier((0.068 * s_ + dl[2], -0.795), (0.05 * s_, -0.81), (0.04 * s_, -0.85), (0.036 * s_, -0.88), 6))
+    k.poligon([(-0.026, -0.86), (0.026, -0.86), (0.03, -0.80), (-0.03, -0.80)])
+    sag = (bezier((0.028, -0.835), (0.09, -0.825), (0.17, -0.80), (0.205, -0.772), 8)
+           + bezier((0.205, -0.772), (0.215, -0.72), (0.185, -0.66), (0.17, -0.60), 8)
+           + bezier((0.17, -0.60), (0.155, -0.52), (0.14, -0.47), (0.14, su - 0.01), 6))
     k.poligon([(-x, y) for x, y in reversed(sag)] + sag)
-    uzuv(k, [(-0.24, -0.74), (-0.31, -0.62), (-0.33, -0.52), (-0.34, su)], 0.06, 0.045)
+    uzuv(k, [(-0.20, -0.765), (-0.26, -0.68), (-0.27, -0.56), (-0.265, su)], 0.045, 0.036)
     b = boynuz
-    el = (0.12 + 0.06 * (1 - b), -0.84 + 0.20 * (1 - b))
-    uzuv(k, [(0.24, -0.74), (0.33, -0.66), (0.26 + 0.06 * (1 - b), -0.72 + 0.1 * (1 - b)), el], 0.06, 0.04)
-    boynuz_yol = bezier((el[0] - 0.05, el[1] - 0.005), (el[0] + 0.10, el[1] - 0.04),
-                        (el[0] + 0.20, el[1] - 0.12), (el[0] + 0.24, el[1] - 0.24), 22)
-    k.konik(boynuz_yol, 0.012, 0.06)
+    dirsek = (0.28 + 0.03 * b, -0.66 - 0.23 * b)
+    el = (0.26 + 0.07 * b, -0.52 - 0.52 * b)
+    uzuv(k, [(0.20, -0.765), dirsek, dirsek, el], 0.045, 0.034)
+    boynuz_yol = bezier((el[0] - 0.01, el[1] + 0.04), (el[0] + 0.02, el[1] - 0.06),
+                        (el[0] + 0.12, el[1] - 0.12), (el[0] + 0.16, el[1] - 0.05), 24)
+    k.konik(boynuz_yol, 0.014, 0.055)
     isle(taban, k, DENIZ_YESIL, isik=(0.35, -0.9), guc=guc, dolgu=(0.008, 0.025, 0.035), kenar_guc=1.3)
-    for s in (-1, 1):
-        g = pikselle_yerel(k.u, k.v, boy, 1, 0.022 * s, -0.905)
-        lekele(taban, g[0], g[1], 0.006 * boy, 0.0035 * boy, DENIZ_YESIL, 5 * guc)
-    for i in range(5):
-        for j in range(3):
-            c = pikselle_yerel(k.u, k.v, boy, 1, -0.10 + i * 0.05 + 0.025 * (j % 2), -0.70 + j * 0.07)
-            lekele(taban, c[0], c[1], 0.014 * boy, 0.005 * boy, DENIZ_YESIL, 0.12 * guc)
+    detay(taban, k, [bezier((-0.03, -0.85), (-0.05, -0.76), (-0.02, -0.68), (0.0, -0.64), 10),
+                     bezier((0.03, -0.85), (0.05, -0.76), (0.02, -0.68), (0.0, -0.64), 10)]
+          + [bezier((x - 0.03, -0.60 + j * 0.05), (x - 0.01, -0.575 + j * 0.05), (x + 0.01, -0.575 + j * 0.05),
+                    (x + 0.03, -0.60 + j * 0.05), 6) for j in range(3) for x in (-0.09, -0.03, 0.03, 0.09)],
+          DENIZ_YESIL, 0.35 * guc)
+    for s_ in (-1, 1):
+        g = pikselle_yerel(k.u, k.v, boy, 1, 0.019 * s_, -0.905)
+        lekele(taban, g[0], g[1], 0.0055 * boy, 0.003 * boy, DENIZ_YESIL, 5 * guc)
+    for cx, yuk in ((-0.032, 0.045), (0.0, 0.072), (0.032, 0.045)):
+        c = pikselle_yerel(k.u, k.v, boy, 1, cx + 0.01, -0.945 - yuk * 0.9)
+        lekele(taban, c[0], c[1], 0.006 * boy, 0.006 * boy, BEYAZ_KOPUK, (1.2 + 0.4 * math.sin(t * 4 + cx * 50)) * guc)
     agiz = pikselle_yerel(k.u, k.v, boy, 1, *boynuz_yol[-1])
-    lekele(taban, agiz[0], agiz[1], 0.05 * boy, 0.05 * boy, SICAK, 0.5 * guc * b)
+    lekele(taban, agiz[0], agiz[1], 0.05 * boy, 0.05 * boy, SICAK, 0.6 * guc * b)
 
 
 def manwe(taban, u, v, boy, t, guc=1.0, isaret=0.0, yon=1):
@@ -294,6 +319,9 @@ def manwe(taban, u, v, boy, t, guc=1.0, isaret=0.0, yon=1):
     k.cizgi([(-0.11, -0.80), (-0.17 - 0.03 * isaret, -0.66 - 0.06 * isaret), el], 0.04)
     k.elips(el[0], el[1], 0.022, 0.018)
     isle(taban, k, GOK_MAVI, isik=(0.4, -0.9), guc=guc, dolgu=(0.01, 0.015, 0.04), kenar_guc=1.3)
+    detay(taban, k, [[(-0.125, -0.56), (0.125, -0.56)], [(0.0, -0.76), (0.0, -0.56)],
+                     bezier((0.0, -0.56), (0.01, -0.35), (0.03, -0.20), (0.05, 0.0), 8),
+                     bezier((-0.05, -0.83), (-0.03, -0.80), (0.03, -0.80), (0.05, -0.83), 6)], GOK_MAVI, 0.45 * guc)
     kure = pikselle_yerel(u, v, boy, yon, 0.16, -1.07)
     lekele(taban, kure[0], kure[1], 0.028 * boy, 0.028 * boy, np.array([0.3, 0.55, 1.0]), 1.6 * guc)
     lekele(taban, kure[0], kure[1], 0.008 * boy, 0.008 * boy, SICAK, 4.0 * guc)
@@ -318,13 +346,14 @@ def aule(taban, u, v, boy, t, guc=1.0, vurus=0.0, yon=1):
         uzuv(k, [(0.07 * s, -0.30), (0.10 * s, -0.18), (0.12 * s, -0.08), (0.13 * s, -0.03)], 0.05, 0.042)
         k.poligon([(0.08 * s, -0.045), (0.19 * s, -0.04), (0.20 * s, 0.0), (0.08 * s, 0.0)])
     uzuv(k, [(-0.19, -0.77), (-0.22, -0.64), (-0.14, -0.56), (0.05, -0.50)], 0.045, 0.034)
-    aci = math.radians(-150 + 150 * vurus)
-    omuz = np.array([0.19, -0.77])
-    dirsek = omuz + 0.16 * np.array([math.cos(aci + 0.7), math.sin(aci + 0.7)])
-    el = dirsek + 0.15 * np.array([math.cos(aci - 0.2), math.sin(aci - 0.2)])
-    uzuv(k, [tuple(omuz), tuple(dirsek), tuple(dirsek), tuple(el)], 0.05, 0.035)
-    sap_yon = np.array([math.cos(aci - 1.2), math.sin(aci - 1.2)])
-    uc = el + 0.30 * sap_yon
+    f = vurus
+    dirsek = (0.30 + 0.02 * f, -0.95 + 0.29 * f)
+    el = (0.25 + 0.06 * f, -1.08 + 0.46 * f)
+    uzuv(k, [(0.19, -0.77), dirsek, dirsek, el], 0.05, 0.035)
+    aci = math.radians(-110 + 190 * f)
+    sap_yon = np.array([math.cos(aci), math.sin(aci)])
+    el = np.array(el)
+    uc = el + 0.24 * sap_yon
     k.cizgi([tuple(el - 0.03 * sap_yon), tuple(uc)], 0.02)
     dik = np.array([-sap_yon[1], sap_yon[0]])
     k.poligon([tuple(p) for p in (uc + 0.08 * dik - 0.03 * sap_yon, uc + 0.08 * dik + 0.05 * sap_yon,
@@ -334,6 +363,8 @@ def aule(taban, u, v, boy, t, guc=1.0, vurus=0.0, yon=1):
                (0.46, -0.25), (0.50, -0.21), (0.28, -0.21), (0.32, -0.25), (0.30, -0.36)])
     k.poligon([(0.31, -0.21), (0.47, -0.21), (0.50, 0.0), (0.28, 0.0)])
     isle(taban, k, KOR, isik=(0.9, 0.1), guc=guc, dolgu=(0.03, 0.012, 0.005), kenar_guc=1.5)
+    detay(taban, k, [[(-0.12, -0.60), (-0.14, -0.22), (0.14, -0.22), (0.12, -0.60)], [(-0.15, -0.50), (0.15, -0.50)],
+                     [(-0.02, -0.63), (0.02, -0.63)]], KOR, 0.4 * guc)
     demir = pikselle_yerel(u, v, boy, yon, 0.36, -0.445)
     lekele(taban, demir[0], demir[1], 0.05 * boy, 0.008 * boy, np.array([1.0, 0.55, 0.15]), 3.0 * guc)
     lekele(taban, demir[0], demir[1], 0.14 * boy, 0.06 * boy, KOR, 0.8 * guc)
@@ -533,9 +564,9 @@ def yanardag(taban, u, v, boy, t, guc=1.0, patlama=1.0, tohum=0):
     for i in range(3):
         x0 = rng.uniform(-0.06, 0.06)
         yon_ = 1 if i % 2 else -1
-        for j in range(10):
-            f = j / 9
+        for j in range(26):
+            f = j / 25
             x = x0 + yon_ * f * rng.uniform(0.25, 0.4) + 0.02 * math.sin(j * 1.7 + i)
             y = -0.93 + f * 0.75
             c = (u + x * boy, v + y * boy)
-            lekele(taban, c[0], c[1], 0.012 * boy, 0.02 * boy, KOR, (1.1 - 0.7 * f) * guc * patlama)
+            lekele(taban, c[0], c[1], 0.010 * boy, 0.016 * boy, KOR, (0.55 - 0.35 * f) * guc * patlama)

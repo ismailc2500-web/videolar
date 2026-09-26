@@ -4,7 +4,7 @@
 |---|---|
 | **Konu** | Ilúvatar'ın görüsü, Ilúvatar'ın Çocukları, "Eä!", Valar'ın Arda'ya inişi |
 | **Kaynak** | *Silmarillion* — "Ainulindalë" |
-| **Tahmini süre** | 2:10 (≈253 kelime · 622 hece) |
+| **Tahmini süre** | 2:16 (≈263 kelime · 652 hece) |
 | **Telaffuz** | Eä: E-a · Arda: AR-da · Valar: VA-lar · Manwë: MAN-ve · Aulë: AV-le |
 
 > 🎙️ Seslendirme metni `>` ile başlayan satırlardır. AI görsel promptlarının sonuna [üretim rehberindeki](../uretim-rehberi.md#görsel-stil) STİL ekini ekle.
@@ -35,15 +35,15 @@
 - **Ekran yazısı:** ELFLER · İNSANLAR — Ilúvatar'ın Çocukları
 - **AI prompt:** `silhouettes of tall elves and humans standing under a starry sky on a young world, seen from far above, a pair of jealous red eyes watching from the darkness`
 
-### Sahne 4 · 0:42–1:04 · Su, hava, toprak
+### Sahne 4 · 0:42–1:08 · Su, hava, toprak
 
-> Her Ainu en çok kendi söylediği parçaya hayran kaldı. Ulmo suyu izledi, Manwë rüzgârları, Aulë toprağı. Melkor, sulara dondurucu bir soğuk göndermişti. Ama o soğuk bile suyu yok edemedi; kar tanelerine ve buza dönüştürdü. Ulmo şaşkınlıkla, "Su, kalbimin hayal ettiğinden de güzel olmuş!" dedi.
+> Her Ainu en çok kendi söylediği parçaya hayran kaldı. Ulmo, denizlerin derinliklerini izledi. Manwë, göğü dolduran rüzgârları. Aulë ise dağları ve madenleri. Melkor, sulara dondurucu bir soğuk göndermişti. Ama o soğuk bile suyu yok edemedi; kar tanelerine ve buza dönüştürdü. Ulmo şaşkınlıkla, "Su, kalbimin hayal ettiğinden de güzel olmuş!" dedi.
 
 - **Görsel:** Okyanus, rüzgâr ve dağ görüntüleri art arda; sonra yakın plan tek bir parlayan kar tanesi.
 - **Ekran yazısı:** ULMO · su  |  MANWË · hava  |  AULË · toprak
 - **AI prompt:** `a single giant glowing snowflake forming above a primordial ocean, storm clouds and wind swirling around it, beauty born from cold`
 
-### Sahne 5 · 1:04–1:16 · Görü kayboluyor
+### Sahne 5 · 1:08–1:20 · Görü kayboluyor
 
 > Ama hikâye bitmeden, görü aniden kayboldu. Ainur'un önünde yalnızca karanlık kaldı. İçlerinde bir huzursuzluk vardı; çünkü gördükleri dünyayı gerçekten istiyorlardı.
 
@@ -51,7 +51,7 @@
 - **Ekran yazısı:** —
 - **AI prompt:** `a glowing vision of a world dissolving into drifting dust and darkness, beings of light left staring into the empty void`
 
-### Sahne 6 · 1:16–1:28 · Eä!
+### Sahne 6 · 1:20–1:32 · Eä!
 
 > O zaman Ilúvatar tek bir kelime söyledi: "Eä!" Yani: "Var olsun!" Sönmez Alev'i boşluğun kalbine gönderdi ve dünya gerçekten var oldu. Elfler bu evrene Eä der: "Olan."
 
@@ -59,7 +59,7 @@
 - **Ekran yazısı:** EÄ! — "VAR OLSUN!"
 - **AI prompt:** `a seed of white flame igniting in the heart of the void and bursting outward into light, matter and stardust, the birth of a universe`
 
-### Sahne 7 · 1:28–1:48 · Valar iniyor
+### Sahne 7 · 1:32–1:53 · Valar iniyor
 
 > Ainur'un bazıları bu dünyaya inmeyi seçti. Ama bir şartla: dünya sona erene kadar ona bağlı kalacaklardı. Onlara Valar, yani "Güçler" dendi. İndiklerinde şaşırdılar; dünya, yani Arda, henüz şekilsizdi. Gördükleri her şeyi çağlar sürecek bir emekle kendileri inşa edeceklerdi.
 
@@ -67,9 +67,9 @@
 - **Ekran yazısı:** VALAR · "Güçler"
 - **AI prompt:** `pillars of radiant light descending from the heavens onto a dark, formless, primordial planet shrouded in mist and molten rock`
 
-### Sahne 8 · 1:48–2:10 · Kapanış
+### Sahne 8 · 1:53–2:16 · Kapanış
 
-> Ve Melkor da geldi. Arda'yı görür görmez kendi krallığı ilan etti. Manwë ona, "Bu krallığı haksızca alamazsın; burada senden başkaları da emek verdi." dedi. Ama Valar ne yaptıysa, Melkor bozdu. Arda'nın ilk savaşı başlamıştı. Peki bu Güçler kimdi? Bir sonraki bölümde Valar'ı tek tek tanıyacağız.
+> Ve Melkor da geldi. Arda'yı görür görmez kendi krallığı ilan etti. Manwë ona şöyle dedi: "Bu krallığı haksızca alamazsın; burada senden başkaları da emek verdi." Ama Valar ne yaptıysa, Melkor bozdu. Arda'nın ilk savaşı başlamıştı. Peki bu Güçler kimdi? Bir sonraki bölümde Valar'ı tek tek tanıyacağız. Takip etmeyi unutma.
 
 - **Görsel:** Volkanlar patlıyor, yeni yükselen dağlar çöküyor; ufukta dev, karanlık bir silüet.
 - **Ekran yazısı:** SONRAKİ BÖLÜM: VALAR — ORTA DÜNYA'NIN TANRILARI MI?

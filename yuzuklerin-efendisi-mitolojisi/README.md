@@ -23,7 +23,7 @@ Tolkien'in dünyasını **yaratılışın ilk anından** başlayarak, kronolojik
 | # | Bölüm | Kanca | Süre* |
 |---|---|---|---|
 | 1 | [Evren Bir Şarkıyla Başladı](sezon-1/01-evren-bir-sarkiyla-basladi.md) · [🎬 video](videolar/sezon-1/01-evren-bir-sarkiyla-basladi.mp4) | Her şey bir şarkıyla başladı | 2:00 ✅ |
-| 2 | [Eä: Dünya Var Oluyor](sezon-1/02-ea-dunya-var-oluyor.md) | Şarkı → rüya → dünya | 2:10 |
+| 2 | [Eä: Dünya Var Oluyor](sezon-1/02-ea-dunya-var-oluyor.md) · [🎬 video](videolar/sezon-1/02-ea-dunya-var-oluyor.mp4) | Şarkı → rüya → dünya | 2:08 ✅ |
 | 3 | [Valar: Orta Dünya'nın Tanrıları mı?](sezon-1/03-valar.md) | Frodo'nun çağırdığı "Elbereth" kim? | 2:11 |
 | 4 | [Gandalf ve Sauron Aynı Türden mi?](sezon-1/04-gandalf-ve-sauron-maiar.md) | Gandalf = Sauron = Balrog? | 2:08 |
 | 5 | [Güneş'ten Önceki Işık: İki Lamba](sezon-1/05-iki-lamba.md) | Güneş'ten önce iki lamba vardı | 2:11 |
