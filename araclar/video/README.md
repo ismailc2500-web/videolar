@@ -46,14 +46,24 @@ Yazı tipleri: https://github.com/google/fonts (`ofl/cinzel`, `ofl/cormorantgara
 | `kontrol.py` | Seslendirmeyi Whisper ile geri çözüp telaffuzu raporlar |
 | `muzik.py` | Sahnelere senkron müzik ve efektleri koddan sentezler (bölüm başına `bolumNN` fonksiyonu) |
 | `motor.py` | Görüntü motoru: zamanlama, başlık/altyazı çizimi, ışık ve parçacık araçları, kare çizici |
-| `karakterler.py` | Karakter ve manzara kütüphanesi: Ainu/Vala, Elf, İnsan, Ulmo, Manwë, Aulë, Melkor, kartal; dağ, deniz, yanardağ, kar tanesi |
+| `karakterler.py` | Siluet karakter ve manzara kütüphanesi: Ainu/Vala, Elf, İnsan, Ulmo, Manwë, Aulë, Melkor, kartal, taht, at (Nahar), gri gezgin, kara lord, hobbit, dev ağaç; dağ, deniz, yanardağ, kar tanesi |
+| `portre.py` | Yüzü görünen, animasyonlu portre düzeneği (göz kırpma, bakış, kaş, ağız, gözyaşı, saç/sakal dalgalanması, nefes, baş eğimi) |
+| `valar.py` | Valar'ın portre tanımları ve taçları (Manwë, Varda, Ulmo, Aulë, Yavanna, Mandos, Nienna, Oromë, Tulkas) |
 | `sahneler_bNN.py` | Bölüme özgü sahneler (`SAHNELER`, `NEBULA`, isteğe bağlı `hazirla` ve `son_islem`) |
 | `goruntu.py` | Komut satırı: önizleme kareleri, kapak ve paralel tam işleme |
 | `birlestir.py` | Miksaj (ducking), -14 LUFS ve MP4 birleştirme |
 
 ### Karakter tarzı
 
-Karakterler **kenar ışıklı siluet** tarzında çizilir: koyu dolgu, ışık yönüne göre parlayan kenar, parlayan gözler ve süs detayları (taç, asa küresi, kızgın demir). Işık varlıkları (Ainur, Valar) parlayan, yumuşak siluetlerdir. Her karakterin kendi rengi vardır: Ulmo deniz yeşili, Manwë gök mavisi, Aulë kor turuncusu, Melkor kızıl. Elfler ve İnsanlar yıldız ışığında gümüş kenarlıdır. Pelerin, saç ve kanatlar zamana bağlı dalgalanır; Aulë'nin çekici ve Ulmo'nun borusu animasyonludur.
+**Portreler (3. bölümden itibaren):** Ana karakterler yüzleriyle görünür. `portre.py`, her karakteri katmanlardan (arka saç, gövde ve kıyafet, yüz, gözler, kaşlar, ağız, sakal, bıyık, ön saç, taç veya kukuleta) kurar ve her karede canlandırır:
+
+- Kendiliğinden yaşama hâli (`bosta`): rastgele aralıklarla göz kırpma (ara sıra çift), nefes, hafif baş salınımı, bakış sıçramaları.
+- Anlatıma bağlı ifadeler: `gulus` (gülümseme), `agiz` (ağız açıklığı), `kas_catik` / `kas_kalk` / `uzgun` (kaşlar), `kapak` (göz kapağı), `yas` (gözyaşı), `bakis` (bakış yönü), `egim` (baş eğimi), `ruzgar` (saç ve sakal dalgalanması).
+- Gölgelendirme: maskenin bulanık hâlinden normal çıkarılır, elipsoit/silindir normalleriyle karıştırılır; cel tarzı ton basamakları, sıcak geçiş, kenar ışığı ve ince kontur eklenir.
+
+Portreler görüntü motorunun ön plan katmanına (`B.on_plan`) bindirilir; parçacıklar, yağmur, kıvılcım gibi öndeki efektler `B.on_katman()` üzerine çizilir.
+
+**Siluetler:** Diğer karakterler **kenar ışıklı siluet** tarzında çizilir: koyu dolgu, ışık yönüne göre parlayan kenar, parlayan gözler ve süs detayları (taç, asa küresi, kızgın demir). Işık varlıkları (Ainur, Valar) parlayan, yumuşak siluetlerdir. Her karakterin kendi rengi vardır: Ulmo deniz yeşili, Manwë gök mavisi, Aulë kor turuncusu, Melkor kızıl. Elfler ve İnsanlar yıldız ışığında gümüş kenarlıdır. Pelerin, saç ve kanatlar zamana bağlı dalgalanır; Aulë'nin çekici ve Ulmo'nun borusu animasyonludur.
 
 ## Bölüm dosyası (`bolumler/bolumNN.json`)
 
@@ -62,9 +72,10 @@ Karakterler **kenar ışıklı siluet** tarzında çizilir: koyu dolgu, ışık 
 - `sahneler[].ekran`: sahne başlığı ve alt başlığı; `ekran_cumle`, başlığın hangi cümlede belireceği.
 - `sahneler[].etiketler`: karakter tanıtım etiketleri (ör. ULMO · Suların Efendisi), `cumle`/`ofset`/`sure`/`y` ile zamanlanır.
 - `sahneler[].sert_gecis`: sahneye kesme geçişle girilir (ör. 1. bölümdeki final akoru).
+- `sahneler[].on_sessizlik`: sahneden önceki sessizlik (saniye; varsayılan 0.85). Ör. Oromë'nin borusu için boşluk.
 - `cumleler[]`: düz metin ya da `{"metin": ..., "hiz_carpani": 0.6}` (tek bir cümleyi yavaş okutmak için).
 - `sahneler[].cumleler`: seslendirme metni. `...` ile ayrılan yerlerde kısa duraklama yapılır.
-- `telaffuz`: ses modeline gönderilen okunuşlar (ör. `Ilúvatar` → `İluvvatar`). Altyazıda doğru yazım kalır.
+- `telaffuz`: ses modeline gönderilen okunuşlar (ör. `Ilúvatar` → `İluvvatar`). Altyazıda doğru yazım kalır. Uzun anahtarlar önce uygulanır; bir kelimeyi genel kuraldan korumak için görünmez boşluk (`\u200b`) kullanılabilir (ör. `Melkor ise` → `Mel\u200bkor ise`).
 - `vurgu`: altyazıda altın renkle vurgulanan kelimeler.
 - `sonraki`, `kapak`: kapanış kartı ve kapak yazıları.
 

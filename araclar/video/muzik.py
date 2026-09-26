@@ -525,7 +525,251 @@ def bolum02(p, z):
     p.ekle(z["birimler"][-1]["bit"] + 0.2, can(hz("D6"), 3.0), kazanc=0.05)
 
 
-BOLUMLER = {1: bolum01, 2: bolum02}
+# ---------------------------------------------------------------- Bölüm 3
+
+def yagmur_ses(sure):
+    n = int(sure * SR)
+    x = suzgec(gurultu(sure), 5000, "high") * 0.6 + suzgec(gurultu(sure), 1200) * 0.4
+    return x * zarf(n, 1.0, 1.5)
+
+
+def bolum03(p, z):
+    from sahneler_b03 import _Z, olaylar
+    O = olaylar(z)
+    Z = _Z(z)
+    c = Z.c
+    bit = [s["bit"] for s in z["sahneler"]]
+    sinir = Z.sinir
+    son = z["sure"]
+
+    # 0 · Kanca: yüz montajı → gökteki tanrılar → Valar
+    for i, t in enumerate(O["yuzler"]):
+        p.ekle(t, davul(90 + 10 * i, 0.8), kazanc=0.30)
+        p.ekle(t, can(hz(["D4", "F4", "A4", "C5", "D5"][i]), 2.0), pan=(i - 2) * 0.3, kazanc=0.06)
+    p.ekle(0.0, ped(hz("D1"), O["kanca_b"] + 1.0, 250), kazanc=0.15)
+    akor(p, 0.0, O["kanca_b"] + 1.0, ["D3", "A3", "F4"], koro, 0.04)
+    t = O["kanca_b"]
+    p.ekle(t, gumbur(3.0, 90, 30), kazanc=0.35)
+    akor(p, t, O["hayir"] - t + 0.8, ["D3", "A3", "D4", "F#4", "A4"], koro, 0.045)
+    akor(p, t, O["hayir"] - t + 0.8, ["D2", "A2", "D3"], ped, 0.06)
+    akor(p, O["hayir"], O["kanca_c"] - O["hayir"] + 0.6, ["D2", "A2", "D3", "F3", "Bb3"], ped, 0.06)
+    akor(p, O["insanlar"], O["kanca_c"] - O["insanlar"] + 0.6, ["F4", "A4", "D5"], koro, 0.035)
+    p.ekle(O["kanca_c"] - 1.2, yukselen(1.15), kazanc=0.10)
+    t = O["kanca_c"]
+    p.ekle(t, gumbur(3.5, 110, 32), kazanc=0.5)
+    p.ekle(t, zil(2.5), kazanc=0.05)
+    akor(p, t, bit[0] - t + 1.5, ["D2", "A2", "D3", "F#3", "A3", "D4"], ped, 0.06)
+    for ad in ["D3", "A3", "F#4"]:
+        p.ekle(t, boru(hz(ad), bit[0] - t + 1.0, atak=0.3), pan=RNG.uniform(-0.5, 0.5), kazanc=0.035)
+    for j in range(10):
+        p.ekle(t + 0.2 + j * 0.3, can(hz(["D5", "F#5", "A5", "D6"][j % 4]), 2.0), pan=RNG.uniform(-0.8, 0.8),
+               kazanc=0.025)
+
+    # 1 · Máhanaxar: tören teması, Melkor'un tahtı çöker, Manwë'ye yakınlaşma
+    t = sinir[1] - 0.2
+    ilerleme = [["D2", "A2", "D3", "F#3"], ["B1", "F#2", "B2", "D3"], ["G2", "D3", "G3", "B3"]]
+    uz = (O["melkor_cokus"] - t) / 2
+    for i, nt in enumerate(ilerleme[:2]):
+        akor(p, t + i * uz, uz + 1.0, nt, ped, 0.055)
+        akor(p, t + i * uz, uz + 1.0, nt[-2:], koro, 0.03)
+    for k in np.arange(t + 0.3, O["melkor_cokus"], 0.9):
+        p.ekle(k, davul(70, 0.7), kazanc=0.12)
+    m = O["melkor_cokus"]
+    p.ekle(m - 0.25, sert(hz("Eb2"), 0.8, atak=0.02, birakma=0.3), kazanc=0.04)
+    p.ekle(m, gumbur(3.0, 70, 26), kazanc=0.55)
+    p.ekle(m, suzgec(gurultu(1.6), 1200) * np.exp(-np.arange(int(1.6 * SR)) / SR / 0.35), kazanc=0.18)
+    akor(p, m + 0.4, O["yakinlas"] - m + 0.4, ["G2", "D3", "G3", "Bb3"], ped, 0.05)
+    t = O["yakinlas"]
+    p.ekle(t, yukselen(sinir[2] - t + 0.1), kazanc=0.12)
+    akor(p, t, sinir[2] - t + 0.5, ["A2", "E3", "A3", "C#4", "E4"], koro, 0.04)
+
+    # 2 · Manwë: gök, rüzgâr, kartallar
+    t = sinir[2]
+    p.ekle(t, zil(3.0), kazanc=0.06)
+    p.ekle(t, gumbur(2.5, 100, 35), kazanc=0.25)
+    p.ekle(t - 0.2, ruzgar_ses(bit[2] - t + 1.5, 1400), kazanc=0.14)
+    ilerleme = [["D3", "A3", "D4", "F#4", "A4"], ["G2", "D3", "B3", "D4", "G4"], ["B2", "F#3", "B3", "D4", "F#4"],
+                ["A2", "E3", "A3", "C#4", "E4"]]
+    uz = (bit[2] - t + 0.6) / len(ilerleme)
+    for i, nt in enumerate(ilerleme):
+        akor(p, t + i * uz, uz + 1.2, nt, ped, 0.05)
+        akor(p, t + i * uz, uz + 1.2, nt[-3:], koro, 0.025)
+    melodi = [("A5", 0.5), ("D6", 0.9), ("C#6", 0.4), ("A5", 0.5), ("F#5", 1.2), ("E5", 0.5), ("F#5", 0.5),
+              ("A5", 0.9), ("B5", 0.5), ("A5", 1.4)]
+    k = t + 0.8
+    for ad, d in melodi:
+        if k > O["kartal"] - 0.4:
+            break
+        p.ekle(k, flut(hz(ad), d + 0.25), pan=0.2, kazanc=0.045)
+        k += d
+    ka = O["kartal"]
+    p.ekle(ka, boru(hz("D4"), 1.4), pan=0.4, kazanc=0.06)
+    p.ekle(ka + 0.35, boru(hz("A4"), 1.8), pan=0.4, kazanc=0.05)
+    p.ekle(ka + 0.2, ruzgar_ses(2.2, 2500), pan=-0.3, kazanc=0.20)
+
+    # 3 · Varda: yıldızlar tek tek yanar; Işık şişesi; Melkor'un korkusu
+    t = sinir[3]
+    akor(p, t, O["sise"][0] - t + 0.8, ["D3", "A3", "E4", "F#4", "C#5"], koro, 0.045)
+    akor(p, t, O["sise"][0] - t + 0.8, ["D2", "A2", "D3"], ped, 0.05)
+    for i in range(14):
+        p.ekle(O["yildizlar"] + 0.18 * i, can(hz(["A5", "C#6", "E6", "F#6", "A6", "E6", "C#6"][i % 7]), 2.2),
+               pan=np.sin(i * 1.1) * 0.8, kazanc=0.035)
+    s0, s1 = O["sise"]
+    p.ekle(s0 - 0.8, yukselen(0.8), kazanc=0.08)
+    p.ekle(s0, zil(3.0), kazanc=0.07)
+    akor(p, s0, s1 - s0 + 0.8, ["A3", "E4", "A4", "C#5", "E5", "A5"], koro, 0.05)
+    for ad in ["A5", "E6", "A6"]:
+        p.ekle(s0, saf(hz(ad), s1 - s0, atak=0.4, birakma=0.6), pan=RNG.uniform(-0.6, 0.6), kazanc=0.015)
+    t = s1
+    akor(p, t, bit[3] - t + 1.0, ["D2", "A2", "D3", "F3"], ped, 0.05)
+    p.ekle(t + 0.3, sert(hz("D2"), bit[3] - t, atak=0.6, birakma=0.6, tremolo=4), kazanc=0.025)
+    akor(p, t + 1.5, bit[3] - t, ["D4", "F#4", "A4", "D5"], koro, 0.04)
+
+    # 4 · Ulmo: derinlik, dalgalar, deniz kabuğu borusu
+    t = sinir[4]
+    p.ekle(t - 0.3, dalga_ses(bit[4] - t + 1.5), kazanc=0.10)
+    p.ekle(t, ped(hz("D1"), bit[4] - t + 1.0, 220), kazanc=0.20)
+    ilerleme = [["D2", "A2", "D3", "F3", "A3"], ["Bb1", "F2", "Bb2", "D3", "F3"], ["C2", "G2", "C3", "E3", "G3"],
+                ["D2", "A2", "D3", "F#3", "A3"]]
+    uz = (bit[4] - t + 0.5) / len(ilerleme)
+    for i, nt in enumerate(ilerleme):
+        akor(p, t + i * uz, uz + 1.2, nt, ped, 0.055)
+    u = O["ulmo_ses"]
+    p.ekle(u, boru(hz("D2"), 2.8, atak=0.6), kazanc=0.10)
+    p.ekle(u + 0.1, boru(hz("A2"), 2.6, atak=0.6), kazanc=0.07)
+    akor(p, u, 3.0, ["D4", "A4", "D5"], koro, 0.035)
+    for j in range(18):
+        p.ekle(t + 0.5 + j * 0.55 + RNG.uniform(0, 0.3), can(hz(["D6", "A6", "F6", "E6"][j % 4]), 1.2),
+               pan=RNG.uniform(-0.9, 0.9), kazanc=0.012)
+
+    # 5 · Aulë: örs vuruşları; Melkor'la benzerlik; paylaşmak / sahiplenmek
+    t = sinir[5]
+    p.ekle(t, ped(hz("A1"), O["paylas"] - t + 0.5, 300), kazanc=0.15)
+    akor(p, t, c(5, 1) - t + 0.5, ["A2", "E3", "A3", "C4"], ped, 0.05)
+    for v in O["ors"]:
+        p.ekle(v, ors(760), pan=0.35, kazanc=0.09)
+        p.ekle(v, davul(120, 0.5), kazanc=0.22)
+    t = c(5, 1)
+    akor(p, t, O["paylas"] - t + 0.3, ["A2", "E3", "Bb3", "D4"], ped, 0.05)
+    p.ekle(t + 0.3, sert(hz("E2"), O["paylas"] - t, atak=0.8, birakma=0.4, tremolo=4), pan=-0.4, kazanc=0.025)
+    t = O["paylas"]
+    akor(p, t, O["sahiplen"] - t + 0.4, ["F2", "C3", "F3", "A3", "C4"], ped, 0.06)
+    akor(p, t, O["sahiplen"] - t + 0.4, ["A4", "C5"], koro, 0.035)
+    t = O["sahiplen"]
+    p.ekle(t, gumbur(2.2, 80, 30), kazanc=0.40)
+    for ad in ["D2", "Eb2", "A2"]:
+        p.ekle(t, sert(hz(ad), bit[5] - t + 0.8, atak=0.05, birakma=0.6, tremolo=5), pan=RNG.uniform(-0.6, 0.6),
+               kazanc=0.035)
+
+    # 6 · Yavanna: pastoral flüt, çiçekler, dev ağaç
+    t = sinir[6]
+    ilerleme = [["G2", "D3", "G3", "B3", "D4"], ["C3", "G3", "C4", "E4"], ["E2", "B2", "E3", "G3", "B3"],
+                ["D3", "A3", "D4", "F#4"]]
+    uz = (bit[6] - t + 0.6) / len(ilerleme)
+    for i, nt in enumerate(ilerleme):
+        akor(p, t + i * uz, uz + 1.2, nt, ped, 0.05)
+    melodi = [("D5", 0.4), ("G5", 0.8), ("A5", 0.4), ("B5", 0.8), ("D6", 0.6), ("B5", 0.4), ("A5", 0.8),
+              ("G5", 0.4), ("E5", 0.6), ("G5", 1.2)]
+    k = t + 0.4
+    for ad, d in melodi:
+        if k > bit[6]:
+            break
+        p.ekle(k, flut(hz(ad), d + 0.25), pan=-0.2, kazanc=0.05)
+        k += d
+    for j in range(16):
+        p.ekle(t + 0.3 + j * 0.18, can(hz(["G5", "B5", "D6", "G6"][j % 4]), 1.5), pan=np.sin(j) * 0.8,
+               kazanc=0.018)
+    a = O["agac"]
+    p.ekle(a, yukselen(2.5) * 0.3, kazanc=0.1)
+    akor(p, a, bit[6] - a + 1.2, ["G3", "B3", "D4", "G4", "B4", "D5"], koro, 0.04)
+
+    # 7 · Mandos: derin çan, karanlık salonlar
+    t = sinir[7]
+    p.ekle(t, gumbur(3.0, 70, 28), kazanc=0.3)
+    p.ekle(t, ped(hz("D1"), bit[7] - t + 1.0, 180), kazanc=0.22)
+    akor(p, t, bit[7] - t + 1.0, ["D2", "A2", "D3", "F3"], ped, 0.05)
+    akor(p, t + 1.0, bit[7] - t, ["D4", "F4", "A4"], koro, 0.03)
+    for k in np.arange(t + 0.1, bit[7] + 0.5, 2.2):
+        p.ekle(k, can(hz("D3"), 4.0), kazanc=0.10)
+        p.ekle(k, can(hz("A3"), 3.0), kazanc=0.04)
+    p.ekle(O["mandos_goz"], sert(hz("A1"), 2.5, atak=0.8, birakma=1.0, tremolo=3), kazanc=0.03)
+
+    # 8 · Nienna: yağmur, ağıt; umut
+    t = sinir[8]
+    p.ekle(t - 0.3, yagmur_ses(bit[8] - t + 1.5), kazanc=0.05)
+    akor(p, t, O["nienna_isik"] - t + 0.5, ["D3", "F3", "A3", "D4"], ped, 0.05)
+    akor(p, t + 1.0, O["nienna_isik"] - t, ["F4", "A4"], koro, 0.025)
+    melodi = [("A4", 0.8), ("F5", 1.0), ("E5", 0.5), ("D5", 0.5), ("C5", 0.8), ("D5", 1.4), ("A4", 0.6), ("Bb4", 0.6),
+              ("A4", 1.5)]
+    k = t + 0.5
+    for ad, d in melodi:
+        if k > O["nienna_isik"] - 0.3:
+            break
+        p.ekle(k, flut(hz(ad), d + 0.3), pan=0.15, kazanc=0.045)
+        k += d
+    t = O["nienna_isik"]
+    akor(p, t, bit[8] - t + 1.2, ["Bb2", "F3", "Bb3", "D4", "F4"], ped, 0.05)
+    akor(p, t + 0.4, bit[8] - t + 0.8, ["F4", "Bb4", "D5"], koro, 0.035)
+    for j, ad in enumerate(["D5", "F5", "Bb5", "D6"]):
+        p.ekle(t + 0.3 + j * 0.35, can(hz(ad), 2.0), pan=(j - 1.5) * 0.3, kazanc=0.03)
+
+    # 9 · Oromë: av borusu, dörtnala at
+    for j, b in enumerate(O["boru"]):
+        g = 1.0 if j == 0 else 0.6
+        p.ekle(b, boru(hz("D3"), 1.2, atak=0.08), kazanc=0.10 * g)
+        p.ekle(b + 0.35, boru(hz("A3"), 1.8, atak=0.1), kazanc=0.09 * g)
+        p.ekle(b, gumbur(2.0, 90, 35), kazanc=0.3 * g)
+    t = sinir[9]
+    akor(p, t, bit[9] - t + 1.0, ["D2", "A2", "D3", "F#3"], ped, 0.05)
+    a0, a1 = O["at"]
+    for k in np.arange(a0, a1 + 0.2, 0.42):
+        for d, ff in ((0.0, 95), (0.1, 80), (0.21, 110)):
+            p.ekle(k + d, davul(ff, 0.3), kazanc=0.11)
+    akor(p, a0, a1 - a0 + 1.0, ["D3", "A3", "D4", "F#4", "A4"], koro, 0.035)
+
+    # 10 · Tulkas: yumruklar, kahkaha, altın enerji
+    t = sinir[10]
+    ilerleme = [["D2", "A2", "D3", "F#3"], ["G2", "D3", "G3", "B3"], ["A2", "E3", "A3", "C#4"], ["D2", "A2", "D3", "F#3"]]
+    uz = (bit[10] - t + 0.6) / len(ilerleme)
+    for i, nt in enumerate(ilerleme):
+        akor(p, t + i * uz, uz + 1.0, nt, ped, 0.055)
+        for ad in nt[1:]:
+            p.ekle(t + i * uz, boru(hz(ad), uz + 0.6), pan=RNG.uniform(-0.5, 0.5), kazanc=0.028)
+    for k in np.arange(t + 0.2, bit[10], 0.5):
+        p.ekle(k, davul(100 if int((k - t) / 0.5) % 2 else 75, 0.4), kazanc=0.12)
+    for y in O["yumruk"]:
+        p.ekle(y, gumbur(1.5, 120, 40), kazanc=0.45)
+        p.ekle(y, suzgec(gurultu(0.4), 2500) * np.exp(-np.arange(int(0.4 * SR)) / SR / 0.06), kazanc=0.2)
+    kk = O["kuyruklu"]
+    p.ekle(kk - 0.2, yukselen(1.2) * 0.5, kazanc=0.1)
+    p.ekle(kk + 1.2, gumbur(2.0, 90, 30), kazanc=0.3)
+
+    # 11 · Maiar → Gandalf ve Sauron → kapanış
+    t = sinir[11]
+    akor(p, t, O["iki_isim"] - t + 0.5, ["D3", "A3", "D4", "E4", "A4"], ped, 0.05)
+    r = O["ruhlar"]
+    for j in range(30):
+        p.ekle(r + j * 0.1 + RNG.uniform(0, 0.08), can(hz(["D6", "E6", "F#6", "A6", "B6"][j % 5]), 1.6),
+               pan=RNG.uniform(-0.9, 0.9), kazanc=0.02)
+    akor(p, r, O["iki_isim"] - r + 0.5, ["F#4", "A4", "D5"], koro, 0.035)
+    t = O["iki_isim"]
+    p.ekle(t, ped(hz("D1"), son - t, 200), kazanc=0.18)
+    for k in np.arange(t, O["sauron"], 0.7):
+        p.ekle(k, nabiz(), kazanc=0.18)
+    g = O["gandalf"]
+    akor(p, g, 2.2, ["D3", "A3", "D4", "F#4"], koro, 0.045)
+    p.ekle(g, can(hz("D5"), 3.0), kazanc=0.05)
+    sa = O["sauron"]
+    p.ekle(sa, gumbur(3.0, 75, 26), kazanc=0.5)
+    for ad in ["D2", "Eb2", "Ab2"]:
+        p.ekle(sa, sert(hz(ad), 3.0, atak=0.05, birakma=1.2, tremolo=4), pan=RNG.uniform(-0.6, 0.6), kazanc=0.035)
+    t = c(11, 3)
+    akor(p, t, son - t, ["D3", "A3", "D4", "F#4", "A4"], ped, 0.05)
+    akor(p, t + 0.5, son - t - 0.5, ["A4", "D5"], koro, 0.03)
+    p.ekle(z["birimler"][-1]["bit"] + 0.2, can(hz("D6"), 3.0), kazanc=0.05)
+
+
+BOLUMLER = {1: bolum01, 2: bolum02, 3: bolum03}
 
 
 def main():

@@ -58,11 +58,18 @@ class Kalem:
         cv2.polylines(self.m, [np.int32(self.px(pts) * 16)], False, deger, k, cv2.LINE_AA, 4)
 
     def konik(self, pts, r0, r1, deger=255):
-        """Kalınlığı r0'dan r1'e incelen eğri (boynuz, kuyruk, saç tutamı)."""
-        n = len(pts)
-        for i, (x, y) in enumerate(pts):
-            r = r0 + (r1 - r0) * i / max(1, n - 1)
-            self.elips(x, y, r, r, deger=deger)
+        """Kalınlığı r0'dan r1'e incelen eğri (boynuz, kuyruk, saç tutamı); pürüzsüz kenarlı şerit."""
+        p = np.asarray(pts, np.float32)
+        if len(p) < 2:
+            self.elips(p[0, 0], p[0, 1], r0, r0, deger=deger)
+            return
+        d = np.gradient(p, axis=0)
+        n = np.stack([-d[:, 1], d[:, 0]], -1)
+        n /= np.maximum(1e-6, np.linalg.norm(n, axis=1, keepdims=True))
+        r = np.linspace(r0, r1, len(p))[:, None]
+        self.poligon(np.vstack([p + n * r, (p - n * r)[::-1]]), deger)
+        self.elips(p[0, 0], p[0, 1], r0, r0, deger=deger)
+        self.elips(p[-1, 0], p[-1, 1], r1, r1, deger=deger)
 
     def kirp(self, pay=18):
         x0, y0, x1, y1 = self.kutu
@@ -393,6 +400,7 @@ def kartal(taban, u, v, boy, t, renk=GOK_MAVI, guc=1.0, faz=0.0, isik=(0.3, -0.9
         arka = [(0.12 * s, 0.07 - cirp * 0.2), (0.03 * s, 0.05)]
         k.poligon(on + parmak + arka)
     isle(taban, k, renk, isik=isik, guc=guc, dolgu=(0.01, 0.01, 0.02), kenar_guc=0.9)
+    return k
 
 
 SILUET_SAG = [(0, -0.07), (0.03, 0.01), (0.06, -0.05), (0.09, 0.02), (0.13, -0.03), (0.12, 0.05), (0.125, 0.09),
@@ -410,6 +418,7 @@ def melkor_dev(taban, u, v, boy, t, guc=1.0, kor_guc=1.0, isik=(0.0, -1.0)):
     for s in (-1, 1):
         g = (u + 0.018 * s * boy, v - 0.915 * boy)
         lekele(taban, g[0], g[1], 0.0045 * boy, 0.003 * boy, KOR, 7 * guc * kor_guc)
+    return k
 
 
 # ------------------------------------------------------------------ manzara
@@ -570,3 +579,221 @@ def yanardag(taban, u, v, boy, t, guc=1.0, patlama=1.0, tohum=0):
             y = -0.93 + f * 0.75
             c = (u + x * boy, v + y * boy)
             lekele(taban, c[0], c[1], 0.010 * boy, 0.016 * boy, KOR, (0.55 - 0.35 * f) * guc * patlama)
+
+
+# ------------------------------------------------------------------ 3. bölüm: tahtlar, at, gezgin, kara lord
+
+def taht(taban, u, v, boy, renk, guc=1.0, isik=(0.0, -1.0), kenar_guc=1.0, dolgu=(0.012, 0.012, 0.025)):
+    """Yüksek sırtlı taht (önden). v: taban hizası; boy: sırtın yüksekliği."""
+    k = Kalem(u, v, boy)
+    k.poligon([(-0.16, -0.62), (-0.13, -0.86), (-0.07, -0.93), (0.0, -1.0), (0.07, -0.93), (0.13, -0.86), (0.16, -0.62),
+               (0.16, -0.30), (-0.16, -0.30)])
+    for s in (-1, 1):
+        k.poligon([(0.16 * s, -0.40), (0.26 * s, -0.42), (0.27 * s, -0.36), (0.25 * s, 0.0), (0.18 * s, 0.0),
+                   (0.18 * s, -0.30)])
+        k.elips(0.265 * s, -0.43, 0.035, 0.03)
+    k.poligon([(-0.25, -0.32), (0.25, -0.32), (0.27, -0.24), (-0.27, -0.24)])
+    k.poligon([(-0.22, -0.24), (0.22, -0.24), (0.24, 0.0), (-0.24, 0.0)])
+    k.poligon([(-0.32, 0.0), (0.32, 0.0), (0.34, 0.05), (-0.34, 0.05)])
+    isle(taban, k, renk, isik=isik, guc=guc, dolgu=dolgu, kenar_guc=kenar_guc)
+    detay(taban, k, [[(-0.10, -0.62), (-0.08, -0.84), (0.0, -0.92), (0.08, -0.84), (0.10, -0.62), (-0.10, -0.62)],
+                     [(0.0, -0.88), (0.0, -0.66)]], renk, 0.35 * guc * kenar_guc)
+    return k
+
+
+def at(taban, u, v, boy, t, renk=(0.95, 0.97, 1.0), guc=1.0, hiz=1.0, yon=1, binici=True, boru=0.0, parlak=True):
+    """Dörtnala koşan at (Nahar) ve isteğe bağlı binici. v: toynak hizası; boy: sağrı yüksekliği ~0.7."""
+    k = Kalem(u, v, boy, yon)
+    f = t * 2.4 * hiz * 2 * math.pi
+    sl = 0.022 * math.sin(f)
+    eg = 0.03 * math.sin(f + 0.6)
+
+    def o(x, y):
+        return (x, y + sl + eg * x)
+
+    govde = (bezier(o(-0.40, -0.66), o(-0.30, -0.76), o(-0.10, -0.70), o(0.10, -0.71), 8)
+             + bezier(o(0.10, -0.71), o(0.22, -0.72), o(0.30, -0.86), o(0.40, -0.98), 8)
+             + bezier(o(0.40, -0.98), o(0.44, -1.04), o(0.48, -1.08), o(0.52, -1.06), 5)
+             + bezier(o(0.52, -1.06), o(0.60, -1.00), o(0.70, -0.90), o(0.72, -0.86), 6)
+             + bezier(o(0.72, -0.86), o(0.70, -0.82), o(0.64, -0.83), o(0.56, -0.88), 5)
+             + bezier(o(0.56, -0.88), o(0.48, -0.86), o(0.40, -0.80), o(0.34, -0.66), 6)
+             + bezier(o(0.34, -0.66), o(0.32, -0.54), o(0.20, -0.48), o(0.0, -0.47), 8)
+             + bezier(o(0.0, -0.47), o(-0.20, -0.46), o(-0.36, -0.48), o(-0.42, -0.58), 8))
+    k.poligon(govde)
+    k.poligon([o(0.47, -1.06), o(0.48, -1.15), o(0.51, -1.07)])
+    for i in range(7):
+        x = 0.24 + i * 0.035
+        y = -0.78 - i * 0.042
+        dal = 0.05 * math.sin(f * 0.5 + i * 0.7)
+        k.konik(bezier(o(x, y), o(x - 0.06, y + 0.01), o(x - 0.12, y + 0.03 + dal), o(x - 0.19, y + 0.06 + dal), 10),
+                0.022, 0.004)
+    kuyruk = bezier(o(-0.40, -0.68), (-0.52, -0.72 + sl), (-0.62, -0.64 + 0.05 * math.sin(f)),
+                    (-0.74, -0.56 + 0.07 * math.sin(f + 1)), 16)
+    k.konik(kuyruk, 0.04, 0.008)
+    # bacaklar: ön ve arka çift, dörtnal döngüsü
+    for x0, faz, on in ((0.26, 0.0, True), (0.18, 0.8, True), (-0.28, 2.6, False), (-0.34, 3.3, False)):
+        a = math.sin(f + faz)
+        c = math.cos(f + faz)
+        ust = o(x0, -0.58)
+        if on:
+            diz = (x0 + 0.08 * a + 0.03, -0.36 - 0.10 * max(0.0, c))
+            ayak = (diz[0] + 0.06 * a - 0.02 - 0.10 * max(0.0, c), -0.02 - 0.20 * max(0.0, c))
+        else:
+            diz = (x0 - 0.06 + 0.07 * a, -0.34 - 0.06 * max(0.0, -c))
+            ayak = (diz[0] + 0.02 - 0.08 * max(0.0, -c) + 0.04 * a, -0.02 - 0.14 * max(0.0, -c))
+        k.konik([ust, ((ust[0] + diz[0]) / 2, (ust[1] + diz[1]) / 2), diz], 0.055, 0.024)
+        k.konik([diz, ((diz[0] + ayak[0]) / 2, (diz[1] + ayak[1]) / 2), ayak], 0.024, 0.018)
+        k.elips(ayak[0] + 0.01, ayak[1], 0.026, 0.018)
+    if binici:
+        k.poligon([o(-0.06, -0.72), o(0.10, -0.72), o(0.08, -1.08), o(0.04, -1.14), o(-0.03, -1.10)])
+        k.elips(*o(0.05, -1.21), 0.045, 0.055)
+        k.konik([o(0.03, -0.72), o(0.08, -0.60), o(0.06, -0.50)], 0.035, 0.022)
+        pel = [0.05 * math.sin(f * 0.5 + i) for i in range(4)]
+        k.poligon([o(0.0, -1.12), (-0.20 + pel[0], -1.08 + sl), (-0.36 + pel[1], -0.98 + sl), (-0.46 + pel[2], -0.86 + sl),
+                   (-0.30 + pel[3], -0.84 + sl), o(-0.04, -0.86)])
+        if boru > 0:
+            el = o(0.15, -1.22 - 0.02 * boru)
+            k.konik([o(0.08, -1.08), o(0.15, -1.08), el], 0.022, 0.018)
+            k.konik(bezier(el, (el[0] + 0.06, el[1] - 0.06), (el[0] + 0.12, el[1] - 0.10), (el[0] + 0.16, el[1] - 0.16),
+                           10), 0.012, 0.042)
+        else:
+            k.konik([o(0.08, -1.08), o(0.18, -0.98), o(0.30, -0.94)], 0.022, 0.016)
+    if parlak:
+        isle(taban, k, renk, guc=guc, parlak=True, parlak_renk=renk, kenar_guc=0.8)
+    else:
+        isle(taban, k, renk, isik=(0.3, -0.9), guc=guc, dolgu=(0.02, 0.02, 0.03), kenar_guc=1.2)
+    return k
+
+
+def gezgin(taban, u, v, boy, t, renk=(0.85, 0.88, 0.95), guc=1.0, yon=1, parlak=False, asa_isik=0.0):
+    """Sivri, geniş kenarlı şapkalı, asalı, sakallı gezgin (gri büyücü ipucu)."""
+    k = Kalem(u, v, boy, yon)
+    r = [0.02 * math.sin(1.3 * t + i) for i in range(5)]
+    k.poligon([(-0.13, -0.88), (0.13, -0.88), (0.14, -0.86), (-0.14, -0.86)])
+    k.poligon([(-0.13, -0.87), (-0.06, -0.90), (-0.04, -0.98), (0.02 + r[0], -1.10), (0.09 + r[0] * 2, -1.19),
+               (0.05, -1.04), (0.05, -0.93), (0.09, -0.88)])
+    k.elips(0.0, -0.84, 0.042, 0.05)
+    k.poligon(bezier((-0.04, -0.84), (-0.05, -0.74), (-0.02, -0.64), (0.0, -0.60), 6)
+              + bezier((0.0, -0.60), (0.02, -0.64), (0.05, -0.74), (0.04, -0.84), 6))
+    sag = (bezier((0.03, -0.80), (0.08, -0.80), (0.12, -0.78), (0.13, -0.72), 6)
+           + bezier((0.13, -0.72), (0.12, -0.55), (0.14, -0.30), (0.19 + r[1], 0.0), 10))
+    k.poligon([(-x, y) for x, y in reversed(sag)] + sag)
+    k.poligon([(-0.12, -0.74)] + bezier((-0.18, -0.62), (-0.24 + r[2], -0.42), (-0.28 + r[3], -0.20),
+                                         (-0.30 + r[4], 0.0), 10) + [(-0.15, 0.0)])
+    k.cizgi([(0.22, -1.02), (0.25, 0.0)], 0.018)
+    k.poligon([(0.205, -1.02), (0.235, -1.10), (0.26, -1.05), (0.24, -0.99)])
+    uzuv(k, [(0.11, -0.74), (0.18, -0.66), (0.21, -0.72), (0.225, -0.78)], 0.03, 0.022)
+    if parlak:
+        isle(taban, k, renk, guc=guc, parlak=True, parlak_renk=renk)
+    else:
+        isle(taban, k, renk, isik=(-0.5, -0.8), guc=guc, dolgu=(0.02, 0.02, 0.025), kenar_guc=1.2)
+    if asa_isik > 0:
+        c = pikselle_yerel(u, v, boy, yon, 0.235, -1.05)
+        lekele(taban, c[0], c[1], 0.03 * boy, 0.03 * boy, np.array([0.8, 0.9, 1.0]), 1.4 * asa_isik * guc)
+        lekele(taban, c[0], c[1], 0.008 * boy, 0.008 * boy, SICAK, 4.0 * asa_isik * guc)
+    return k
+
+
+def kara_lord(taban, u, v, boy, t, guc=1.0, yon=1, kor_guc=1.0):
+    """Dikenli miğferli, zırhlı kara lord (Sauron ipucu); kor gibi yanan gözler ve zırh çatlakları."""
+    k = Kalem(u, v, boy, yon)
+    r = [0.02 * math.sin(1.1 * t + i) for i in range(6)]
+    k.poligon([(-0.055, -0.86), (-0.06, -0.93), (-0.045, -0.99), (-0.03, -1.10), (-0.015, -1.00), (0.0, -1.16),
+               (0.015, -1.00), (0.03, -1.10), (0.045, -0.99), (0.06, -0.93), (0.055, -0.86), (0.035, -0.82),
+               (-0.035, -0.82)])
+    k.poligon([(-0.04, -0.84), (0.04, -0.84), (0.05, -0.78), (-0.05, -0.78)])
+    for s in (-1, 1):
+        k.poligon([(0.04 * s, -0.80), (0.12 * s, -0.83), (0.20 * s, -0.84), (0.25 * s, -0.80), (0.22 * s, -0.76),
+                   (0.26 * s, -0.74), (0.20 * s, -0.68), (0.10 * s, -0.70)])
+        k.poligon([(0.18 * s, -0.84), (0.20 * s, -0.93), (0.22 * s, -0.84)])
+    sag = (bezier((0.03, -0.78), (0.10, -0.78), (0.16, -0.74), (0.16, -0.66), 6)
+           + bezier((0.16, -0.66), (0.14, -0.50), (0.17, -0.25), (0.24 + r[0], 0.0), 10))
+    k.poligon([(-x, y) for x, y in reversed(sag)] + sag)
+    for s in (-1, 1):
+        k.poligon([(0.18 * s, -0.78)] + bezier((0.24 * s, -0.66), (0.30 * s + r[1] * s, -0.40),
+                                                (0.34 * s + r[2] * s, -0.20), (0.38 * s + r[3] * s, 0.0), 10)
+                  + [(0.20 * s, 0.0)])
+    uzuv(k, [(0.20, -0.72), (0.26, -0.58), (0.24, -0.50), (0.20, -0.44)], 0.04, 0.03)
+    uzuv(k, [(-0.20, -0.72), (-0.26, -0.58), (-0.24, -0.50), (-0.20, -0.44)], 0.04, 0.03)
+    isle(taban, k, KOR, isik=(0.0, -1.0), guc=guc, dolgu=(0.02, 0.006, 0.004), kenar_guc=1.3 * kor_guc)
+    detay(taban, k, [[(-0.10, -0.60), (-0.02, -0.52), (-0.06, -0.40)], [(0.08, -0.62), (0.03, -0.50), (0.09, -0.36)],
+                     [(-0.04, -0.30), (0.02, -0.22), (-0.01, -0.10)]], KOR, 0.6 * guc * kor_guc)
+    for s in (-1, 1):
+        g = pikselle_yerel(u, v, boy, yon, 0.02 * s, -0.915)
+        lekele(taban, g[0], g[1], 0.0045 * boy, 0.0028 * boy, np.array([1.0, 0.55, 0.12]), 8 * guc * kor_guc)
+    return k
+
+
+def hobbit(taban, u, v, boy, t, renk=AY_ISIGI, guc=1.0, kol=1.0, yon=1, isik=(0.0, -1.0)):
+    """Kıvırcık saçlı, pelerinli küçük yolcu; kol: 0 aşağı, 1 yukarı kaldırılmış (şişe tutar)."""
+    k = Kalem(u, v, boy, yon)
+    k.elips(0, -0.86, 0.085, 0.09)
+    for i in range(7):
+        a = math.pi * (1.1 + 0.8 * i / 6)
+        k.elips(0.075 * math.cos(a), -0.88 + 0.08 * math.sin(a), 0.03, 0.028)
+    r = 0.015 * math.sin(1.5 * t)
+    sag = (bezier((0.03, -0.77), (0.09, -0.77), (0.13, -0.74), (0.14, -0.68), 5)
+           + bezier((0.14, -0.68), (0.14, -0.45), (0.17, -0.25), (0.20 + r, -0.10), 8))
+    k.poligon([(-x, y) for x, y in reversed(sag)] + sag)
+    for s in (-1, 1):
+        uzuv(k, [(0.05 * s, -0.14), (0.055 * s, -0.08), (0.06 * s, -0.04), (0.06 * s, 0.0)], 0.035, 0.03)
+        k.elips(0.08 * s, -0.005, 0.05, 0.02)
+    el = (0.12 + 0.02 * kol, -0.60 - 0.52 * kol)
+    dirsek = (0.16, -0.66 - 0.18 * kol)
+    uzuv(k, [(0.10, -0.72), dirsek, dirsek, el], 0.032, 0.024)
+    uzuv(k, [(-0.10, -0.72), (-0.15, -0.60), (-0.14, -0.50), (-0.12, -0.44)], 0.032, 0.024)
+    isle(taban, k, renk, isik=isik, guc=guc, dolgu=(0.012, 0.012, 0.02), kenar_guc=1.2)
+    return pikselle_yerel(u, v, boy, yon, el[0], el[1] - 0.03)
+
+
+def golge_yaratik(taban, u, v, boy, t, guc=1.0, faz=0.0, yon=1, kacis=0.0):
+    """Kambur, pençeli karanlık yaratık; kızıl gözler. kacis: 0-1 kaçarken öne eğilme."""
+    k = Kalem(u, v, boy, yon)
+    e = 0.15 * kacis
+    s_ = 0.02 * math.sin(6 * t + faz) * (1 + kacis)
+    k.elips(0.10 + e, -0.62 + e * 0.3, 0.07, 0.06)
+    k.poligon([(0.04 + e, -0.68), (0.10 + e, -0.74), (0.12 + e, -0.80), (0.14 + e, -0.72)])
+    k.poligon(bezier((0.14 + e, -0.62), (0.02, -0.80), (-0.20, -0.70), (-0.24, -0.40), 10)
+              + bezier((-0.24, -0.40), (-0.22, -0.20), (-0.10, -0.12), (0.06, -0.20), 8))
+    for i, x in enumerate((-0.16, -0.06, 0.04)):
+        a = math.sin(8 * t + faz + i * 2) * (0.3 + kacis)
+        uzuv(k, [(x, -0.25), (x + 0.04 * a, -0.14), (x + 0.02 + 0.06 * a, -0.06), (x + 0.03 + 0.08 * a, 0.0)],
+             0.03, 0.012)
+    uzuv(k, [(0.08 + e, -0.55), (0.18 + e, -0.45 + s_), (0.22 + e, -0.38), (0.28 + e, -0.34)], 0.025, 0.01)
+    isle(taban, k, KIZIL, isik=(-0.5, -0.8), guc=guc, dolgu=(0.005, 0.0, 0.0), kenar_guc=0.5)
+    for d in (-1, 1):
+        g = pikselle_yerel(u, v, boy, yon, 0.12 + e + 0.022 * d, -0.635)
+        lekele(taban, g[0], g[1], 0.004 * boy, 0.003 * boy, KIZIL, 6 * guc)
+
+
+def agac(taban, ayrinti, u, v, boy, t, buyume=1.0, renk=(1.0, 0.85, 0.45), guc=1.0, tohum=3, yaprak=True):
+    """Dallanarak büyüyen dev ağaç (parlayan kenarlı siluet); buyume 0 → 1."""
+    if guc <= 0.01 or buyume <= 0:
+        return
+    k = Kalem(u, v, boy)
+    rng = np.random.default_rng(tohum)
+    uclar = []
+
+    def dal(x, y, aci, uz, kal, derin):
+        f = np.clip(buyume * 5 - derin, 0, 1)
+        if f <= 0:
+            return
+        x2 = x + math.cos(aci) * uz * f
+        y2 = y + math.sin(aci) * uz * f
+        orta = (x + (x2 - x) * 0.5 + 0.02 * math.sin(derin + aci * 3), y + (y2 - y) * 0.5)
+        k.konik(bezier((x, y), orta, orta, (x2, y2), 8), kal, kal * 0.7)
+        if derin >= 4:
+            uclar.append((x2, y2, f))
+            return
+        for d in (-1, 1):
+            dal(x2, y2, aci + d * rng.uniform(0.35, 0.65) + 0.03 * math.sin(t * 0.8 + derin),
+                uz * rng.uniform(0.68, 0.8), kal * 0.66, derin + 1)
+
+    for d in (-1, 1):
+        k.konik(bezier((0.0, 0.0), (0.05 * d, -0.02), (0.14 * d, 0.0), (0.22 * d, 0.02), 6), 0.05, 0.01)
+    dal(0.0, 0.0, -math.pi / 2, 0.30, 0.055, 0)
+    isle(taban, k, renk, isik=(0.0, -1.0), guc=guc, dolgu=(0.02, 0.018, 0.01), kenar_guc=1.2)
+    if yaprak:
+        for x, y, f in uclar:
+            c = pikselle_yerel(u, v, boy, 1, x, y)
+            lekele(taban, c[0], c[1], 0.035 * boy, 0.03 * boy, np.asarray(renk, np.float32), 0.35 * f * guc)

@@ -300,6 +300,13 @@ class Baglam:
             "a": rng.uniform(0.35, 1.0, 700).astype(np.float32),
         }
         self.figurler = self._figur_dizilimi()
+        self.on_plan, self.on_ayrinti = [], None
+
+    def on_katman(self):
+        """Ön plandaki (portrelerin önündeki) toplamalı ayrıntı katmanı; gerektiğinde oluşturulur."""
+        if self.on_ayrinti is None:
+            self.on_ayrinti = np.zeros((H, W, 3), np.uint8)
+        return self.on_ayrinti
 
     def ses(self, t):
         i = int(t * FPS)
@@ -577,6 +584,7 @@ class Cizer:
         z, B = self.z, self.B
         taban = np.zeros((h, w, 3), np.float32)
         ayrinti = np.zeros((H, W, 3), np.uint8)
+        B.on_plan, B.on_ayrinti = [], None
         agirliklar = [(i, z.agirlik(i, t)) for i in range(len(self.gorseller))]
         for i, a in agirliklar:
             if a > 0.001:
@@ -590,6 +598,10 @@ class Cizer:
         taban = 1 - np.exp(-np.maximum(taban, 0) * 1.1)
         kare = cv2.resize((taban * 255).astype(np.uint8), (W, H), interpolation=cv2.INTER_CUBIC)
         kare = cv2.add(kare, ayrinti)
+        for katman in B.on_plan:
+            katman(kare)
+        if B.on_ayrinti is not None:
+            kare = cv2.add(kare, B.on_ayrinti)
 
         if hasattr(self.m, "son_islem"):
             kare = self.m.son_islem(self, kare, t)

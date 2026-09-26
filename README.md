@@ -6,7 +6,7 @@ TikTok ve YouTube için hazırlanan video serilerinin senaryoları ve üretim do
 
 | Seri | Durum | Açıklama |
 |---|---|---|
-| [Yüzüklerin Efendisi Mitolojisi — En Baştan](yuzuklerin-efendisi-mitolojisi/) | Sezon 1 senaryoları hazır (14 bölüm) · Bölüm 1–2 videoları hazır | Tolkien'in dünyasını yaratılıştan başlayarak anlatan 2:00–2:30'luk dikey videolar |
+| [Yüzüklerin Efendisi Mitolojisi — En Baştan](yuzuklerin-efendisi-mitolojisi/) | Sezon 1 senaryoları hazır (14 bölüm) · Bölüm 1–3 videoları hazır | Tolkien'in dünyasını yaratılıştan başlayarak anlatan 2:00–2:30'luk dikey videolar |
 
 ## Marka
 

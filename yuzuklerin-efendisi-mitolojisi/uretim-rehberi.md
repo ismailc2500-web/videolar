@@ -67,19 +67,19 @@ Midjourney kullanıyorsan sonuna `--ar 9:16` ekle. ChatGPT, Gemini, Leonardo, Id
 
 ## Karakter görünümleri
 
-Aynı karakter farklı bölümlerde görüneceği için promptlarda bu tarifleri kullan; mümkünse ilk ürettiğin başarılı görseli "referans görsel" olarak sakla ve sonraki üretimlerde kullan.
+Aynı karakter farklı bölümlerde görüneceği için promptlarda bu tarifleri kullan; mümkünse ilk ürettiğin başarılı görseli "referans görsel" olarak sakla ve sonraki üretimlerde kullan. Hazır videolardaki Valar portreleri (3. bölüm) bu tariflere göre çizildi; tanımları [`araclar/video/valar.py`](../araclar/video/valar.py) dosyasındadır.
 
 | Karakter | Görünüm (prompta eklenecek) |
 |---|---|
 | **Melkor / Morgoth** | `towering dark lord in black jagged armor, face in shadow, burning ember eyes, later wearing an iron crown` |
 | **Manwë** | `regal king in sapphire-blue robes, silver-white hair, calm wise face, eagles around him` |
 | **Varda** | `radiant queen with dark hair crowned with stars, white shimmering gown, light spilling from her hands` |
-| **Ulmo** | `colossal sea lord, armor of silver-green scales, crown of sea foam, horn of white shell` |
-| **Aulë** | `mighty broad-shouldered smith, bronze skin, leather apron, great hammer, forge light` |
-| **Yavanna** | `tall woman robed in green, golden hair with leaves, gentle, tree-like presence` |
+| **Ulmo** | `colossal sea lord, long sea-green hair and beard, armor of silver-green scales, crown of sea foam, glowing aqua eyes, horn of white shell` |
+| **Aulë** | `mighty broad-shouldered smith, bronze skin, brown hair and beard, thin bronze circlet with an ember gem, leather apron, great hammer, forge light` |
+| **Yavanna** | `tall woman robed in green and gold, long auburn hair crowned with leaves and small flowers, gentle, tree-like presence` |
 | **Mandos** | `stern hooded figure in dark robes, pale face, halls of shadow` |
 | **Nienna** | `grey-cloaked mourning woman, silver tears, compassionate` |
-| **Oromë** | `hunter lord on a great white horse, long horn, green and gold hunting garb` |
+| **Oromë** | `hunter lord with dark hair and short beard, circlet of golden leaves, on a great white horse, long horn, green and gold hunting garb` |
 | **Tulkas** | `golden-haired golden-bearded giant warrior, bare fists, laughing` |
 | **Olórin (Gandalf)** | `gentle young spirit in soft grey robes` → Orta Dünya'da: `old wanderer in grey cloak, wide pointed hat, staff` |
 | **Sauron (erken)** | `handsome copper-haired apprentice smith, eyes that glint red` |

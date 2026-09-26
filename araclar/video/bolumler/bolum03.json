@@ -1,0 +1,343 @@
+{
+  "bolum": 3,
+  "baslik": "Valar: Orta Dünya'nın Tanrıları mı?",
+  "hedef_sure": 138.0,
+  "sonraki": [
+    "SONRAKİ BÖLÜM",
+    "GANDALF VE SAURON",
+    "Aynı türden mi?"
+  ],
+  "kapak": [
+    "TOLKIEN'İN",
+    "TANRILARI"
+  ],
+  "sahneler": [
+    {
+      "gorsel": "kanca",
+      "ekran": [
+        "TANRI MI,",
+        "DEĞİL Mİ?"
+      ],
+      "ekran_bitis_cumle": 2,
+      "cumleler": [
+        "Tolkien'in dünyasında tanrılar var mı?",
+        "Hem evet... hem hayır.",
+        "İnsanlar onlara tanrı dedi.",
+        "Ama onlar yalnızca Ilúvatar'ın yarattığı en güçlü varlıklardı: Valar."
+      ],
+      "etiketler": [
+        {
+          "ana": "VALAR",
+          "alt": "Güçler",
+          "cumle": 3,
+          "ofset": 3.7,
+          "sure": 1.8,
+          "y": 0.215
+        }
+      ]
+    },
+    {
+      "gorsel": "tanitim",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "7 LORD · 7 KRALİÇE",
+          "alt": "Máhanaxar: Kader Çemberi",
+          "cumle": 0,
+          "sure": 5.0,
+          "y": 0.215
+        }
+      ],
+      "cumleler": [
+        "Valar on dört kişidir: yedi Lord ve yedi Kraliçe.",
+        "Melkor artık onlardan sayılmaz.",
+        "Hadi en önemlileriyle tek tek tanışalım."
+      ]
+    },
+    {
+      "gorsel": "manwe",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "MANWË",
+          "alt": "Arda'nın Kralı",
+          "cumle": 0,
+          "ofset": 0.3,
+          "sure": 4.2,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Manwë: Arda'nın Kralı, göğün ve rüzgârların efendisi.",
+        "Ilúvatar'ın düşüncesini en iyi anlayan odur.",
+        "Dünyanın en yüksek dağı Taniquetil'in zirvesinde oturur.",
+        "Kartallar onun habercileridir."
+      ],
+      "on_sessizlik": 1.1
+    },
+    {
+      "gorsel": "varda",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "VARDA",
+          "alt": "Yıldızların Kraliçesi",
+          "cumle": 0,
+          "ofset": 0.3,
+          "sure": 3.6,
+          "y": 0.115
+        },
+        {
+          "ana": "ELBERETH",
+          "alt": "Elflerin dilinde",
+          "cumle": 1,
+          "sure": 2.2,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Yanında eşi Varda: Yıldızların Kraliçesi.",
+        "Elfler ona Elbereth der.",
+        "Frodo'nun ve Sam'in en zor anlarında çağırdığı isim budur.",
+        "Melkor, bütün Valar içinde en çok ondan korkardı."
+      ]
+    },
+    {
+      "gorsel": "ulmo",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "ULMO",
+          "alt": "Suların Efendisi",
+          "cumle": 0,
+          "ofset": 0.2,
+          "sure": 4.0,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Ulmo: Suların Efendisi.",
+        "Derin sularda yalnız dolaşır; sesi bütün ırmaklarda, bütün kaynaklarda duyulur.",
+        "Diğer Valar Orta Dünya'dan çekildiğinde bile, o oradakileri hiç unutmadı."
+      ]
+    },
+    {
+      "gorsel": "aule",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "AULË",
+          "alt": "Demirci",
+          "cumle": 0,
+          "ofset": 0.2,
+          "sure": 4.0,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Aulë: Demirci. Dağların, madenlerin ve bütün zanaatların ustası.",
+        "Düşüncede Melkor'a en çok benzeyen oydu; ikisi de yaratmayı severdi.",
+        "Ama Aulë yarattığını paylaşmak isterdi... Melkor ise sahiplenmek."
+      ]
+    },
+    {
+      "gorsel": "yavanna",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "YAVANNA",
+          "alt": "Yeşeren Her Şeyin Annesi",
+          "cumle": 0,
+          "ofset": 0.3,
+          "sure": 4.0,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Eşi Yavanna ise yeşeren her şeyin annesi.",
+        "Ormanların, çiçeklerin ve tohumların koruyucusu.",
+        "Bazen, gökyüzüne uzanan dev bir ağaç gibi görünür."
+      ]
+    },
+    {
+      "gorsel": "mandos",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "MANDOS",
+          "alt": "Kaderin Sesi",
+          "cumle": 0,
+          "ofset": 0.2,
+          "sure": 4.0,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Mandos: Ölülerin Salonları'nın bekçisi.",
+        "Asıl adı Námo'dur; ama herkes onu salonlarının adıyla anar.",
+        "Kaderi bilir, ama yalnızca Manwë isterse konuşur."
+      ]
+    },
+    {
+      "gorsel": "nienna",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "NIENNA",
+          "alt": "Yas ve Merhamet",
+          "cumle": 0,
+          "ofset": 0.4,
+          "sure": 4.0,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Kız kardeşi Nienna ise yasın ve merhametin Valası.",
+        "Dünyanın bütün yaraları için gözyaşı döker.",
+        "Onu dinleyenler merhameti ve umutla dayanmayı öğrenir."
+      ]
+    },
+    {
+      "gorsel": "orome",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "OROMË",
+          "alt": "Büyük Avcı",
+          "cumle": 0,
+          "ofset": 0.2,
+          "sure": 3.8,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Oromë: Büyük bir avcı.",
+        "Beyaz atı Nahar'la ormanları dolaşır.",
+        "Borusunun sesi karanlık yaratıkları kaçırır."
+      ],
+      "on_sessizlik": 1.2
+    },
+    {
+      "gorsel": "tulkas",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "TULKAS",
+          "alt": "Güçlü",
+          "cumle": 0,
+          "ofset": 0.3,
+          "sure": 3.8,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Ve Tulkas: en güçlüleri.",
+        "Silah taşımaz, çıplak elleriyle dövüşür... ve savaşırken güler.",
+        "Arda'ya en son o geldi; Melkor'a karşı Valar'a yardım etmek için."
+      ]
+    },
+    {
+      "gorsel": "maiar",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "MAIAR",
+          "alt": "Valar'ın yardımcıları",
+          "cumle": 1,
+          "ofset": 0.8,
+          "sure": 3.4,
+          "y": 0.215
+        }
+      ],
+      "cumleler": [
+        "Ama Valar Arda'ya yalnız gelmedi.",
+        "Yanlarında daha küçük ruhlar da vardı: Maiar.",
+        "Ve onların arasında iki isim var ki, çok iyi tanıyorsun: Gandalf... ve Sauron.",
+        "Bir sonraki bölümde. Takip etmeyi unutma."
+      ],
+      "on_sessizlik": 1.4
+    }
+  ],
+  "telaffuz": {
+    "Ilúvatar": "İluvvatar",
+    "Tolkien'in": "Tolkinin",
+    "Manwë": "Manve",
+    "Aulë": "Avle",
+    "Oromë": "Orome",
+    "Melkor": "Melkorr",
+    "Taniquetil": "Tanikvetil",
+    "Elbereth": "Elberet",
+    "Maiar": "Mayar",
+    "Sam'in": "Sem'in",
+    "rüzgârların": "rüzgarların",
+    "Námo": "Namo",
+    "Melkor ise": "Mel\u200bkor ise",
+    "Nienna": "Niyenna",
+    "savaşırken güler": "savaşırken, güler",
+    "Mandos:": "Mandos."
+  },
+  "vurgu": [
+    "Tolkien'in",
+    "Ilúvatar'ın",
+    "Valar",
+    "Valar'a",
+    "Valası",
+    "Melkor",
+    "Melkor'a",
+    "Manwë",
+    "Arda'nın",
+    "Arda'ya",
+    "Taniquetil'in",
+    "Varda",
+    "Elbereth",
+    "Frodo'nun",
+    "Sam'in",
+    "Ulmo",
+    "Aulë",
+    "Yavanna",
+    "Mandos",
+    "Nienna",
+    "Oromë",
+    "Nahar'la",
+    "Tulkas",
+    "Maiar",
+    "Gandalf",
+    "Sauron",
+    "Lord",
+    "Kraliçe",
+    "Námo'dur"
+  ]
+}
