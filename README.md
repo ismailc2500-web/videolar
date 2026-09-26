@@ -11,5 +11,4 @@ TikTok ve YouTube için hazırlanan video serilerinin senaryoları ve üretim do
 ## Araçlar
 
 - [`araclar/video/`](araclar/video/) — Bölüm JSON'undan seslendirme, müzik, görüntü ve altyazıyla yayına hazır dikey MP4 üreten hat.
-
 - [`araclar/sure-hesapla.py`](araclar/sure-hesapla.py) — Senaryoların seslendirme süresini Türkçe hece sayısından tahmin eder, sahne zaman damgalarını günceller ve teleprompter metinleri üretir. Kullanımı [üretim rehberinde](yuzuklerin-efendisi-mitolojisi/uretim-rehberi.md#seslendirme-kaydı).
