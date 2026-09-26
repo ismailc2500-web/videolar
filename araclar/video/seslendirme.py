@@ -52,9 +52,12 @@ def birimler(bolum):
     sonuc = []
     for si, sahne in enumerate(bolum["sahneler"]):
         for ci, cumle in enumerate(sahne["cumleler"]):
+            carpan = 1.0
+            if isinstance(cumle, dict):
+                cumle, carpan = cumle["metin"], cumle.get("hiz_carpani", 1.0)
             parcalar = [p.strip() for p in re.split(r"(?<=\.\.\.)\s+", cumle) if p.strip()]
             for pi, parca in enumerate(parcalar):
-                sonuc.append({"sahne": si, "cumle": ci, "parca": pi,
+                sonuc.append({"sahne": si, "cumle": ci, "parca": pi, "hiz_carpani": carpan,
                               "son_parca": pi == len(parcalar) - 1, "metin": parca})
     return sonuc
 
@@ -125,7 +128,7 @@ def main():
     siradaki = a.hiz
     for tur in range(6):
         hiz = siradaki
-        sesler = [sentezle(tts, b["ses_metni"], hiz) for b in liste]
+        sesler = [sentezle(tts, b["ses_metni"], hiz * b["hiz_carpani"]) for b in liste]
         zamanlar = dizi(bolum, liste, sesler)
         son = zamanlar[-1][1]
         konusma = sum(len(x) for x in sesler) / SR
@@ -143,7 +146,7 @@ def main():
         tanıyıcı = tanıyıcı_yukle(a.asr)
         secilen = []
         for b, x in zip(liste, sesler):
-            adaylar = [x] + [sentezle(tts, b["ses_metni"], hiz) for _ in range(a.deneme - 1)]
+            adaylar = [x] + [sentezle(tts, b["ses_metni"], hiz * b["hiz_carpani"]) for _ in range(a.deneme - 1)]
             puanlar = [benzerlik(b["metin"], dinle(tanıyıcı, y, SR)) for y in adaylar]
             en_iyi = int(np.argmax(puanlar))
             print(f"  {max(puanlar):.2f} (aday {en_iyi + 1}/{len(adaylar)}) {b['metin']}")

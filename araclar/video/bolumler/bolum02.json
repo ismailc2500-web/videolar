@@ -1,0 +1,217 @@
+{
+  "bolum": 2,
+  "baslik": "Eä: Dünya Var Oluyor",
+  "hedef_sure": 128.0,
+  "sonraki": [
+    "SONRAKİ BÖLÜM",
+    "VALAR",
+    "Orta Dünya'nın Tanrıları mı?"
+  ],
+  "kapak": [
+    "TEK BİR",
+    "KELİMEYLE",
+    "DOĞAN DÜNYA"
+  ],
+  "sahneler": [
+    {
+      "gorsel": "ruya",
+      "ekran": [
+        "TEK BİR KELİMEYLE",
+        "DOĞAN DÜNYA"
+      ],
+      "cumleler": [
+        "Tolkien'in dünyası önce bir şarkıydı.",
+        "Sonra bir rüya oldu.",
+        "Ve en sonunda, tek bir kelimeyle gerçeğe dönüştü."
+      ]
+    },
+    {
+      "gorsel": "goru",
+      "ekran": [
+        "ILÚVATAR'IN GÖRÜSÜ",
+        "Şarkı, bir dünyanın planıydı"
+      ],
+      "cumleler": [
+        "Müzik bittiğinde Ilúvatar, Ainur'u boşluğa götürdü ve onlara bir görü gösterdi.",
+        "Söyledikleri şarkı artık gözlerinin önündeydi: boşluğun ortasında dönen bir dünya.",
+        "Ve o dünyanın tarihi, bir hikâye gibi açılmaya başladı."
+      ]
+    },
+    {
+      "gorsel": "cocuklar",
+      "ekran": [
+        "ELFLER · İNSANLAR",
+        "Ilúvatar'ın Çocukları"
+      ],
+      "ekran_cumle": 1,
+      "cumleler": [
+        "Ama Ainur orada hiç söylemedikleri bir şey gördüler: Ilúvatar'ın Çocukları.",
+        "Elfler ve İnsanlar.",
+        "Onlar yalnızca üçüncü temadan doğmuştu; hiçbir Ainu onların yaratılışına katılmamıştı.",
+        "Bu yüzden Ainur onları çok sevdi.",
+        "Melkor ise kıskandı."
+      ]
+    },
+    {
+      "gorsel": "unsurlar",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "ULMO",
+          "alt": "Suların Efendisi",
+          "cumle": 1,
+          "sure": 2.6
+        },
+        {
+          "ana": "MANWË",
+          "alt": "Rüzgârların Efendisi",
+          "cumle": 2,
+          "sure": 2.4
+        },
+        {
+          "ana": "AULË",
+          "alt": "Dağların Ustası",
+          "cumle": 3,
+          "sure": 2.4
+        }
+      ],
+      "cumleler": [
+        "Her Ainu en çok kendi söylediği parçaya hayran kaldı.",
+        "Ulmo, denizlerin derinliklerini izledi.",
+        "Manwë, göğü dolduran rüzgârları.",
+        "Aulë ise dağları ve madenleri.",
+        "Melkor, sulara dondurucu bir soğuk göndermişti.",
+        "Ama o soğuk bile suyu yok edemedi; kar tanelerine ve buza dönüştürdü.",
+        "Ulmo şaşkınlıkla, \"Su, kalbimin hayal ettiğinden de güzel olmuş!\" dedi."
+      ]
+    },
+    {
+      "gorsel": "kaybolus",
+      "ekran": [
+        "",
+        ""
+      ],
+      "cumleler": [
+        "Ama hikâye bitmeden, görü aniden kayboldu.",
+        "Ainur'un önünde yalnızca karanlık kaldı.",
+        "İçlerinde bir huzursuzluk vardı; çünkü gördükleri dünyayı gerçekten istiyorlardı."
+      ]
+    },
+    {
+      "gorsel": "ea",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "EÄ!",
+          "alt": "Var olsun!",
+          "cumle": 1,
+          "ofset": 0.05,
+          "sure": 4.2,
+          "y": 0.215
+        }
+      ],
+      "cumleler": [
+        "O zaman Ilúvatar tek bir kelime söyledi:",
+        {
+          "metin": "\"Eä!\"",
+          "hiz_carpani": 0.6
+        },
+        "Yani: \"Var olsun!\"",
+        "Sönmez Alev'i boşluğun kalbine gönderdi ve dünya gerçekten var oldu.",
+        "Elfler bu evrene Eä der: \"Olan.\""
+      ]
+    },
+    {
+      "gorsel": "valar",
+      "ekran": [
+        "VALAR",
+        "Güçler"
+      ],
+      "ekran_cumle": 2,
+      "cumleler": [
+        "Ainur'un bazıları bu dünyaya inmeyi seçti.",
+        "Ama bir şartla: dünya sona erene kadar ona bağlı kalacaklardı.",
+        "Onlara Valar, yani \"Güçler\" dendi.",
+        "İndiklerinde şaşırdılar; dünya, yani Arda, henüz şekilsizdi.",
+        "Gördükleri her şeyi, çağlar sürecek bir emekle kendileri inşa edeceklerdi."
+      ]
+    },
+    {
+      "gorsel": "melkor_gelis",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "MANWË",
+          "alt": "Arda'nın Kralı",
+          "cumle": 2,
+          "sure": 3.4
+        },
+        {
+          "ana": "ARDA'NIN",
+          "alt": "İlk Savaşı",
+          "cumle": 4,
+          "sure": 3.0
+        }
+      ],
+      "cumleler": [
+        "Ve Melkor da geldi.",
+        "Arda'yı görür görmez kendi krallığı ilan etti.",
+        "Manwë ona şöyle dedi: \"Bu krallığı haksızca alamazsın; burada senden başkaları da emek verdi.\"",
+        "Ama Valar ne yaptıysa, Melkor bozdu.",
+        "Arda'nın ilk savaşı başlamıştı.",
+        "Peki bu Güçler kimdi? Bir sonraki bölümde Valar'ı tek tek tanıyacağız.",
+        "Takip etmeyi unutma."
+      ]
+    }
+  ],
+  "telaffuz": {
+    "Ilúvatar": "İluvvatar",
+    "Ainur": "Aynur",
+    "Ainu": "Aynu",
+    "Eä": "E, a",
+    "Manwë": "Manve",
+    "Aulë": "Avle",
+    "Melkor": "Melkorr",
+    "hikâye": "hikaye",
+    "rüzgârları": "rüzgarları",
+    "Tolkien'in": "Tolkinin"
+  },
+  "vurgu": [
+    "Tolkien'in",
+    "Ilúvatar",
+    "Ilúvatar'ın",
+    "Ainur",
+    "Ainur'u",
+    "Ainur'un",
+    "Ainu",
+    "Elfler",
+    "İnsanlar",
+    "Melkor",
+    "Ulmo",
+    "Ulmo,",
+    "Manwë",
+    "Manwë,",
+    "Aulë",
+    "Eä",
+    "Eä!",
+    "Valar",
+    "Valar'ı",
+    "Arda",
+    "Arda'yı",
+    "Arda'nın",
+    "Sönmez",
+    "Alev'i",
+    "Güçler",
+    "Olan",
+    "Çocukları"
+  ]
+}
