@@ -1,0 +1,299 @@
+{
+  "bolum": 4,
+  "baslik": "Gandalf ve Sauron Aynı Türden mi?",
+  "hedef_sure": 129.0,
+  "sonraki": [
+    "SONRAKİ BÖLÜM",
+    "İKİ LAMBA",
+    "Güneş'ten önceki ışık"
+  ],
+  "kapak": [
+    "GANDALF VE SAURON",
+    "AYNI TÜRDEN!"
+  ],
+  "sahneler": [
+    {
+      "gorsel": "kanca",
+      "ekran": [
+        "GANDALF = SAURON",
+        "= BALROG?"
+      ],
+      "ekran_bitis_cumle": 1,
+      "cumleler": [
+        "Gandalf ile Sauron... aslında aynı türden varlıklardı.",
+        "Hatta Moria'da köprüde dövüşen Gandalf ve Balrog da öyle.",
+        "Hepsi birer Maia'ydı."
+      ]
+    },
+    {
+      "gorsel": "maiar",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "MAIAR",
+          "alt": "Valar'ın yardımcıları",
+          "cumle": 0,
+          "ofset": 2.6,
+          "sure": 3.6,
+          "y": 0.215
+        }
+      ],
+      "cumleler": [
+        "Valar dünyaya inerken yanlarında daha küçük ruhlar da getirdi: Maiar.",
+        "Onlar da Ainur'dandı, Büyük Müzik'e katılmışlardı; ama güçleri Valar'dan azdı.",
+        "Sayıları bilinmez; pek azının adı bize kadar ulaştı.",
+        "Valar'ın yardımcıları, hizmetkârları ve öğrencileriydiler."
+      ]
+    },
+    {
+      "gorsel": "tanidik",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "EÖNWË",
+          "alt": "Manwë'nin Habercisi",
+          "cumle": 0,
+          "ofset": 0.2,
+          "sure": 2.2,
+          "y": 0.115
+        },
+        {
+          "ana": "OSSË",
+          "alt": "Dalgaların Efendisi",
+          "cumle": 1,
+          "ofset": 0.2,
+          "sure": 1.8,
+          "y": 0.115
+        },
+        {
+          "ana": "UINEN",
+          "alt": "Denizlerin Hanımı",
+          "cumle": 2,
+          "ofset": 0.2,
+          "sure": 1.6,
+          "y": 0.115
+        },
+        {
+          "ana": "MELIAN",
+          "alt": "Bülbüllerin Hanımı",
+          "cumle": 3,
+          "ofset": 0.2,
+          "sure": 3.6,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Manwë'nin sancaktarı ve habercisi Eönwë...",
+        "Dalgaların vahşi efendisi Ossë...",
+        "Denizleri yatıştıran Uinen...",
+        "Ve bir gün bir Elf kralıyla evlenecek olan, bülbüllere şarkı öğreten Melian."
+      ]
+    },
+    {
+      "gorsel": "olorin",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "OLÓRIN",
+          "alt": "Maiar'ın en bilgesi",
+          "cumle": 0,
+          "ofset": 0.3,
+          "sure": 3.6,
+          "y": 0.115
+        },
+        {
+          "ana": "OLÓRIN = GANDALF",
+          "alt": "",
+          "cumle": 6,
+          "ofset": 0.4,
+          "sure": 2.2,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Ama Maiar'ın en bilgesi Olórin'di.",
+        "Rüyaların bahçesi Lórien'de yaşardı.",
+        "Sık sık Nienna'nın evine gider, ondan merhameti ve sabrı öğrenirdi.",
+        "Binlerce yıl sonra, gri cüppeli yaşlı bir adam kılığında Orta Dünya'ya gönderilecekti.",
+        "Gitmek bile istemedi; Sauron'dan korkacak kadar zayıf olduğunu söyledi.",
+        "Manwë ise tam da bu yüzden onu seçti.",
+        "Adı... Gandalf."
+      ]
+    },
+    {
+      "gorsel": "sauron",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "MAIRON",
+          "alt": "Hayranlık Uyandıran",
+          "cumle": 2,
+          "ofset": 0.3,
+          "sure": 3.4,
+          "y": 0.115
+        },
+        {
+          "ana": "SARUMAN",
+          "alt": "O da Aulë'nin halkından",
+          "cumle": 4,
+          "ofset": 0.2,
+          "sure": 2.8,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Peki Sauron?",
+        "O da başlangıçta Aulë'nin Maiar'ındandı; yani büyük demircinin öğrencisi.",
+        "Tolkien'in notlarına göre asıl adı Mairon'du: \"Hayranlık Uyandıran.\"",
+        "Ama düzen ve güç tutkusu onu Melkor'a çekti ve Melkor'un en büyük hizmetkârı oldu.",
+        "Bu arada, Saruman da Aulë'nin halkındandı.",
+        "Güç Yüzükleri'ni dövecek ustalığın nereden geldiğini artık biliyorsun."
+      ],
+      "on_sessizlik": 1.8
+    },
+    {
+      "gorsel": "balrog",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "VALARAUKAR",
+          "alt": "Balroglar",
+          "cumle": 1,
+          "ofset": 0.3,
+          "sure": 3.6,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Melkor pek çok Maia'yı daha kendine çekti.",
+        "En korkunçları ateş ruhlarıydı: Valaraukar.",
+        "Biz onları Balrog olarak tanıyoruz.",
+        "Alevden kırbaçları ve dehşet saçan gölgeleri vardı."
+      ]
+    },
+    {
+      "gorsel": "kopru",
+      "ekran": [
+        "",
+        ""
+      ],
+      "etiketler": [
+        {
+          "ana": "\"GEÇEMEZSİN!\"",
+          "alt": "",
+          "cumle": 2,
+          "ofset": 0.0,
+          "sure": 3.0,
+          "y": 0.215
+        },
+        {
+          "ana": "AK GANDALF",
+          "alt": "",
+          "cumle": 4,
+          "ofset": 0.8,
+          "sure": 2.6,
+          "y": 0.115
+        }
+      ],
+      "cumleler": [
+        "Yani Moria'da, Khazad-dûm Köprüsü'nde yaşanan o sahne... aslında dünyanın başlangıcından beri var olan iki ruhun karşılaşmasıydı.",
+        "Merhameti seçen bir Maia ile karanlığı seçen bir Maia.",
+        {
+          "metin": "\"Geçemezsin!\"",
+          "hiz_carpani": 0.85
+        },
+        "Köprü yıkıldı; ikisi birlikte derinliklere düştü.",
+        "Ama Gandalf geri dönecekti: Ak Gandalf olarak."
+      ],
+      "on_sessizlik": 1.0
+    },
+    {
+      "gorsel": "kapanis",
+      "ekran": [
+        "",
+        ""
+      ],
+      "cumleler": [
+        "Peki Valar dünyayı neyle aydınlattı?",
+        "Güneş'ten ve Ay'dan çok önce, Arda'yı iki dev lamba aydınlatıyordu.",
+        "Bir sonraki bölümde. Takip etmeyi unutma."
+      ],
+      "on_sessizlik": 1.0
+    }
+  ],
+  "telaffuz": {
+    "Maiar": "Mayar",
+    "Maia": "Maya",
+    "Olórin": "Olorin",
+    "Lórien": "Lorien",
+    "Eönwë": "Eonve",
+    "Ossë": "Osse",
+    "Mairon": "Mayron",
+    "Manwë": "Manve",
+    "Aulë": "Avle",
+    "Melkor": "Melkorr",
+    "Ainur": "Aynur",
+    "Nienna": "Niyenna",
+    "Khazad-dûm": "Hazad dûm",
+    "hizmetkârları": "hizmetkarları",
+    "hizmetkârı": "hizmetkarı",
+    "Uinen": "Uynen",
+    "efendisi Ossë": "efendisi, Osse"
+  },
+  "vurgu": [
+    "Gandalf",
+    "Sauron",
+    "Sauron'dan",
+    "Balrog",
+    "Maia'ydı",
+    "Maia'yı",
+    "Maia",
+    "Maiar",
+    "Maiar'ın",
+    "Maiar'ındandı",
+    "Valar",
+    "Valar'ın",
+    "Valar'dan",
+    "Ainur'dandı",
+    "Müzik'e",
+    "Manwë'nin",
+    "Manwë",
+    "Eönwë",
+    "Ossë",
+    "Uinen",
+    "Melian",
+    "Olórin'di",
+    "Lórien'de",
+    "Nienna'nın",
+    "Mairon'du",
+    "Aulë'nin",
+    "Melkor",
+    "Melkor'a",
+    "Melkor'un",
+    "Saruman",
+    "Valaraukar",
+    "Moria'da",
+    "Khazad-dûm",
+    "Köprüsü'nde",
+    "Geçemezsin",
+    "Arda'yı",
+    "Tolkien'in",
+    "Yüzükleri'ni",
+    "Ak"
+  ]
+}

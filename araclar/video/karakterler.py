@@ -797,3 +797,147 @@ def agac(taban, ayrinti, u, v, boy, t, buyume=1.0, renk=(1.0, 0.85, 0.45), guc=1
         for x, y, f in uclar:
             c = pikselle_yerel(u, v, boy, 1, x, y)
             lekele(taban, c[0], c[1], 0.035 * boy, 0.03 * boy, np.asarray(renk, np.float32), 0.35 * f * guc)
+
+
+# ------------------------------------------------------------------ 4. bölüm: Balrog, köprü, lambalar
+
+def alevler(taban, u, v, boy, t, noktalar, guc, renk=KOR, yon=1, boyut=1.0):
+    """Yerel noktalardan yükselen, uçları titreşen alev dilleri (parlayan yumuşak dolgu)."""
+    if guc <= 0.01:
+        return
+    for katman, (olc, ren, g) in enumerate(((1.0, renk, 1.0), (0.55, np.array((1.0, 0.82, 0.35), np.float32), 0.8))):
+        k = Kalem(u, v, boy, yon)
+        for i, (x, y) in enumerate(noktalar):
+            faz = i * 1.7
+            uz = (0.07 + 0.05 * (0.5 + 0.5 * math.sin(t * 7 + faz))) * boyut * olc
+            gen = 0.022 * boyut * (0.6 + 0.4 * olc)
+            sal = 0.03 * boyut * math.sin(t * 6 + faz * 1.3)
+            k.poligon(bezier((x - gen, y), (x - gen * 1.2, y - uz * 0.4), (x + sal * 0.5, y - uz * 0.7),
+                             (x + sal, y - uz), 8)
+                      + bezier((x + sal, y - uz), (x + sal * 0.3 + gen * 0.4, y - uz * 0.6),
+                               (x + gen * 1.2, y - uz * 0.35), (x + gen, y), 8))
+        isle(taban, k, ren, guc=guc * g, parlak=True, parlak_renk=ren, kenar_guc=0.3)
+
+
+def kirbac_yolu(el, t, boy, yon=1, saklama=0.0, n=40):
+    """Elden sarkan, dalgalanan ya da şaklayan ateş kırbacının noktaları (dünya koordinatı)."""
+    pts = []
+    for i in range(n):
+        s = i / (n - 1)
+        uz = 0.55 * boy
+        x = el[0] - yon * uz * s * (0.55 + 0.45 * saklama)
+        y = el[1] + uz * (0.9 * s * s * (1 - saklama) - 0.25 * saklama * math.sin(s * math.pi))
+        dalga = 0.05 * boy * s * math.sin(s * 9 - t * 7) * (1 - 0.6 * saklama)
+        pts.append((x + dalga * 0.3, y + dalga))
+    return pts
+
+
+def balrog(taban, ayrinti, u, v, boy, t, guc=1.0, yon=1, alev=1.0, saklama=0.0, kanat=1.0):
+    """Gölge ve alevden dev: boynuzlu baş, geniş omuzlar, gölge kanatlar, alev yelesi, ateş kırbacı.
+    v: ayak hizası; yon: 1 sağa, -1 sola bakar."""
+    if guc <= 0.01:
+        return None
+    nf = [0.02 * math.sin(1.1 * t + i) for i in range(8)]
+    if kanat > 0:
+        kk = Kalem(u, v, boy, yon)
+        for s in (-1, 1):
+            uc = (0.55 * s, -1.20 - 0.05 * math.sin(t * 0.7 + s))
+            pts = [(0.10 * s, -0.78)] + bezier((0.18 * s, -0.95), (0.35 * s, -1.15), uc, (0.62 * s, -0.95), 10)
+            for i in range(5):
+                f = i / 4
+                pts.append((s * (0.62 - 0.40 * f) + nf[i] * s, -0.95 + 0.45 * f + 0.06 * math.sin(i * 2.1)))
+                pts.append((s * (0.55 - 0.40 * f), -0.88 + 0.45 * f))
+            pts.append((0.14 * s, -0.55))
+            kk.poligon(pts)
+        isle(taban, kk, KOR, isik=(0.0, 1.0), guc=guc * kanat, dolgu=(0.012, 0.004, 0.003), kenar_guc=0.5,
+             opaklik=0.85)
+    k = Kalem(u, v, boy, yon)
+    k.elips(0.0, -0.86, 0.06, 0.065)
+    k.poligon([(-0.055, -0.83), (0.055, -0.83), (0.045, -0.76), (-0.045, -0.76)])
+    for s_ in (-1, 1):
+        k.konik(bezier((0.045 * s_, -0.90), (0.14 * s_, -0.95), (0.20 * s_, -1.02), (0.17 * s_, -1.10), 14), 0.022,
+                0.004)
+    sag = (bezier((0.04, -0.79), (0.16, -0.81), (0.26, -0.80), (0.28, -0.72), 6)
+           + bezier((0.28, -0.72), (0.27, -0.62), (0.20, -0.56), (0.12, -0.47), 6)
+           + [(0.15, -0.40)])
+    k.poligon([(-x, y) for x, y in reversed(sag)] + sag)
+    for s_ in (-1, 1):
+        diz = 0.02 * math.sin(t * 1.3 + s_)
+        k.poligon(bezier((0.15 * s_, -0.42), (0.19 * s_, -0.30), (0.17 * s_ + diz, -0.18), (0.18 * s_, 0.0), 8)
+                  + [(0.05 * s_, 0.0)]
+                  + bezier((0.04 * s_, -0.02), (0.06 * s_, -0.18), (0.03 * s_, -0.32), (0.02 * s_, -0.42), 8))
+    k.konik(bezier((0.25, -0.76), (0.37, -0.68), (0.40, -0.58), (0.36, -0.47), 14), 0.058, 0.04)
+    el = (-0.35, -0.47)
+    k.konik(bezier((-0.25, -0.76), (-0.37, -0.68), (-0.40, -0.58), el, 14), 0.058, 0.04)
+    for s_, (hx, hy) in ((1, (0.36, -0.47)), (-1, el)):
+        for j in range(3):
+            k.konik([(hx + 0.02 * (j - 1) * s_, hy), (hx + 0.03 * (j - 1) * s_, hy + 0.04),
+                     (hx + 0.02 * (j - 1) * s_ - 0.01 * s_, hy + 0.07)], 0.014, 0.003)
+    isle(taban, k, KOR, isik=(0.0, 1.0), guc=guc, dolgu=(0.015, 0.004, 0.002), kenar_guc=1.4)
+    detay(taban, k, [[(-0.14, -0.72), (-0.06, -0.64), (-0.10, -0.54)], [(0.13, -0.73), (0.06, -0.63), (0.11, -0.53)],
+                     [(-0.02, -0.52), (0.02, -0.46)], [(-0.12, -0.30), (-0.10, -0.15)], [(0.12, -0.28), (0.10, -0.12)]],
+          KOR, 0.7 * guc)
+    for s_ in (-1, 1):
+        g = pikselle_yerel(u, v, boy, yon, 0.022 * s_, -0.87)
+        lekele(taban, g[0], g[1], 0.006 * boy, 0.0035 * boy, np.array((1.0, 0.75, 0.2), np.float32), 9 * guc)
+    if alev > 0:
+        yele = [(x, -0.80 - 0.10 * (1 - abs(x) / 0.26)) for x in np.linspace(-0.26, 0.26, 13)]
+        alevler(taban, u, v, boy, t, yele, guc * alev, yon=yon, boyut=1.4)
+        alevler(taban, u, v, boy, t + 1.3, [(x, 0.0) for x in np.linspace(-0.18, 0.18, 9)], 0.7 * guc * alev,
+                yon=yon, boyut=0.9)
+        alevler(taban, u, v, boy, t + 2.1, [(0.36, -0.47), el], 0.8 * guc * alev, yon=yon, boyut=0.6)
+    el_d = pikselle_yerel(u, v, boy, yon, *el)
+    yol = kirbac_yolu(el_d, t, boy, yon, saklama)
+    for i, (x, y) in enumerate(yol[::2]):
+        lekele(taban, x, y, 0.010 * boy, 0.010 * boy, KOR, 2.2 * guc * alev)
+    px = np.array([[W / 2 + x * H, H / 2 + y * H] for x, y in yol], np.float32)
+    cv2.polylines(ayrinti, [np.int32(px * 16)], False, tuple(float(c) * guc for c in (255, 200, 110)), 3, cv2.LINE_AA, 4)
+    return k
+
+
+def kopru(taban, v, t, guc=1.0, kirik=0.0, kirik_u=0.10, dusus=0.0):
+    """Uçurumun üstünde ince taş kemer köprü; kirik: 0-1 çatlama, dusus: kırılan parçanın düşüşü."""
+    if guc <= 0.01:
+        return
+    x = np.linspace(-0.45, 0.45, 60)
+    ust = v - 0.012 * (1 - (x / 0.45) ** 2)
+    alt = ust + 0.012 + 0.05 * (x / 0.45) ** 4
+    sol = x < kirik_u
+    k = Kalem(0.0, 0.0, 1.0)
+    k.poligon(list(zip(x[sol], ust[sol])) + list(zip(x[sol][::-1], alt[sol][::-1])))
+    isle(taban, k, KOR, isik=(0.0, 1.0), guc=guc, dolgu=(0.03, 0.02, 0.02), kenar_guc=1.2)
+    if kirik < 1.0 or dusus < 1.2:
+        k2 = Kalem(0.0, dusus * dusus * 0.4, 1.0)
+        sag = ~sol
+        k2.poligon(list(zip(x[sag], ust[sag])) + list(zip(x[sag][::-1], alt[sag][::-1])))
+        isle(taban, k2, KOR, isik=(0.0, 1.0), guc=guc * (1 - 0.5 * min(1.0, dusus)), dolgu=(0.03, 0.02, 0.02),
+             kenar_guc=1.2)
+    if kirik > 0:
+        lekele(taban, kirik_u, v, 0.01, 0.02, np.array((1.0, 0.95, 0.85), np.float32), 3.0 * guc * kirik * (1 - dusus))
+
+
+def lamba(taban, u, v, boy, renk, guc=1.0, yanma=1.0, t=0.0, tohum=0):
+    """Dağlardan yüksek, kaba taş bir sütunun tepesindeki ateş kâsesinde yanan dev lamba. v: sütun tabanı."""
+    if guc <= 0.01:
+        return
+    k = Kalem(u, v, boy)
+    y = np.linspace(0.0, -0.90, 24)
+    gen = 0.10 - 0.065 * (-y / 0.9) ** 0.7
+    puruz = 0.008 * fbm1(y * 30, tohum, 3)
+    sol = list(zip(-gen + puruz, y))
+    sag = list(zip(gen - puruz[::-1] * 0.8, y[::-1]))
+    k.poligon(sol + sag)
+    k.poligon([(-0.035, -0.89), (0.035, -0.89), (0.075, -0.95), (0.08, -0.975), (-0.08, -0.975), (-0.075, -0.95)])
+    isle(taban, k, renk, isik=(0.0, -1.0), guc=guc, dolgu=(0.02, 0.02, 0.03), kenar_guc=0.5 + 0.9 * yanma)
+    detay(taban, k, [[(-0.06, -0.05), (-0.04, -0.35), (-0.03, -0.6)], [(0.05, -0.1), (0.035, -0.45)]],
+          renk, 0.25 * guc * yanma)
+    tepe = (u, v - 1.02 * boy)
+    renk = np.asarray(renk, np.float32)
+    titre = 1.0 + 0.06 * math.sin(t * 3.1 + tohum)
+    lekele(taban, tepe[0], tepe[1], 0.04 * boy, 0.05 * boy, np.array((1.0, 1.0, 1.0), np.float32), 5 * guc * yanma)
+    lekele(taban, tepe[0], tepe[1], 0.10 * boy, 0.10 * boy, renk, 2.2 * guc * yanma * titre)
+    lekele(taban, tepe[0], tepe[1], 0.45 * boy, 0.38 * boy, renk, 0.5 * guc * yanma * titre)
+    for j in range(6):
+        faz = t * 5 + j * 1.1 + tohum
+        lekele(taban, tepe[0] + 0.02 * boy * math.sin(faz), tepe[1] - (0.03 + 0.012 * j) * boy,
+               0.012 * boy, 0.03 * boy, renk, 0.8 * guc * yanma * (0.6 + 0.4 * math.sin(faz * 1.7)))

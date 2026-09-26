@@ -551,6 +551,7 @@ class Cizer:
         self.z = Zaman(bolum, zaman)
         self.B = Baglam(self.z, klasor)
         yz = Yazici(font_klasoru)
+        self.yz = yz
         vurgu = set(bolum.get("vurgu", []))
         self.m = importlib.import_module(f"sahneler_b{bolum['bolum']:02d}")
         self.kanca_bitis = self.z.e(0, bolum["sahneler"][0].get("ekran_bitis_cumle", 0)) + 0.3

@@ -542,12 +542,13 @@ class Portre:
                 ix, iy = cx + gx * 0.028, cy - 0.010 + gy * 0.012
                 r = 0.036 if kadin else 0.034
                 iris = cv2.bitwise_and(tv.elips(tv.bos_maske(), ix, iy, r, r), goz_m)
-                tv.boya(iris, T["goz"], _p(T["goz"]) * 0.30, isik=(0.2, 0.8, 0.6), sigma=0.02, yumusaklik=(0.2, 0.9),
-                        isima=_p(T["goz"]) * T.get("goz_isima", 0.0), sicak_gecis=False)
+                goz_renk = _p(d.get("goz_renk", T["goz"]))
+                tv.boya(iris, goz_renk, goz_renk * 0.30, isik=(0.2, 0.8, 0.6), sigma=0.02, yumusaklik=(0.2, 0.9),
+                        isima=goz_renk * d.get("goz_isima", T.get("goz_isima", 0.0)), sicak_gecis=False)
                 tv.duz(cv2.bitwise_and(tv.elips(tv.bos_maske(), ix, iy, r * 0.42, r * 0.42), goz_m), (0.02, 0.02, 0.03))
                 halka = tv.cizgi(tv.bos_maske(), [(ix + r * math.cos(a), iy + r * math.sin(a))
                                                   for a in np.linspace(0, 2 * math.pi, 25)], 0.006)
-                tv.duz(cv2.bitwise_and(halka, goz_m), _p(T["goz"]) * 0.22, opak=0.85)
+                tv.duz(cv2.bitwise_and(halka, goz_m), goz_renk * 0.22, opak=0.85)
                 tv.duz(cv2.bitwise_and(tv.elips(tv.bos_maske(), ix - r * 0.35, iy - r * 0.38, r * 0.26, r * 0.26), goz_m),
                        (1, 1, 1), opak=0.95)
                 tv.duz(cv2.bitwise_and(tv.elips(tv.bos_maske(), ix + r * 0.35, iy + r * 0.3, r * 0.12, r * 0.12), goz_m),

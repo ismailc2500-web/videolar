@@ -46,9 +46,11 @@ Yazı tipleri: https://github.com/google/fonts (`ofl/cinzel`, `ofl/cormorantgara
 | `kontrol.py` | Seslendirmeyi Whisper ile geri çözüp telaffuzu raporlar |
 | `muzik.py` | Sahnelere senkron müzik ve efektleri koddan sentezler (bölüm başına `bolumNN` fonksiyonu) |
 | `motor.py` | Görüntü motoru: zamanlama, başlık/altyazı çizimi, ışık ve parçacık araçları, kare çizici |
-| `karakterler.py` | Siluet karakter ve manzara kütüphanesi: Ainu/Vala, Elf, İnsan, Ulmo, Manwë, Aulë, Melkor, kartal, taht, at (Nahar), gri gezgin, kara lord, hobbit, dev ağaç; dağ, deniz, yanardağ, kar tanesi |
+| `karakterler.py` | Siluet karakter ve manzara kütüphanesi: Ainu/Vala, Elf, İnsan, Ulmo, Manwë, Aulë, Melkor, kartal, taht, at (Nahar), gri gezgin, kara lord, hobbit, Balrog (alev yelesi ve ateş kırbacıyla), dev ağaç; dağ, deniz, yanardağ, kar tanesi, taş köprü, iki Lamba |
 | `portre.py` | Yüzü görünen, animasyonlu portre düzeneği (göz kırpma, bakış, kaş, ağız, gözyaşı, saç/sakal dalgalanması, nefes, baş eğimi) |
 | `valar.py` | Valar'ın portre tanımları ve taçları (Manwë, Varda, Ulmo, Aulë, Yavanna, Mandos, Nienna, Oromë, Tulkas) |
+| `maiar.py` | Maiar'ın portre tanımları: Olórin, Gandalf (Gri ve Ak, sivri şapkalı), Mairon (Sauron), Melian, Eönwë, Ossë, Uinen |
+| `sahne_araclari.py` | Portreli bölümlerin ortak sahne araçları: zaman yardımcısı, gök/bulut/dağ/deniz dibi, portreyi bindirme (bölünmüş ekran maskesi dahil), göz ışığı, yağmur/kabarcık/kor/çiçek, ifade anahtarlama |
 | `sahneler_bNN.py` | Bölüme özgü sahneler (`SAHNELER`, `NEBULA`, isteğe bağlı `hazirla` ve `son_islem`) |
 | `goruntu.py` | Komut satırı: önizleme kareleri, kapak ve paralel tam işleme |
 | `birlestir.py` | Miksaj (ducking), -14 LUFS ve MP4 birleştirme |
@@ -58,7 +60,7 @@ Yazı tipleri: https://github.com/google/fonts (`ofl/cinzel`, `ofl/cormorantgara
 **Portreler (3. bölümden itibaren):** Ana karakterler yüzleriyle görünür. `portre.py`, her karakteri katmanlardan (arka saç, gövde ve kıyafet, yüz, gözler, kaşlar, ağız, sakal, bıyık, ön saç, taç veya kukuleta) kurar ve her karede canlandırır:
 
 - Kendiliğinden yaşama hâli (`bosta`): rastgele aralıklarla göz kırpma (ara sıra çift), nefes, hafif baş salınımı, bakış sıçramaları.
-- Anlatıma bağlı ifadeler: `gulus` (gülümseme), `agiz` (ağız açıklığı), `kas_catik` / `kas_kalk` / `uzgun` (kaşlar), `kapak` (göz kapağı), `yas` (gözyaşı), `bakis` (bakış yönü), `egim` (baş eğimi), `ruzgar` (saç ve sakal dalgalanması).
+- Anlatıma bağlı ifadeler: `gulus` (gülümseme), `agiz` (ağız açıklığı), `kas_catik` / `kas_kalk` / `uzgun` (kaşlar), `kapak` (göz kapağı), `yas` (gözyaşı), `bakis` (bakış yönü), `egim` (baş eğimi), `ruzgar` (saç ve sakal dalgalanması), `goz_renk` / `goz_isima` (göz rengi ve parlaması; ör. Mairon'un gözlerinin kızıla dönmesi).
 - Gölgelendirme: maskenin bulanık hâlinden normal çıkarılır, elipsoit/silindir normalleriyle karıştırılır; cel tarzı ton basamakları, sıcak geçiş, kenar ışığı ve ince kontur eklenir.
 
 Portreler görüntü motorunun ön plan katmanına (`B.on_plan`) bindirilir; parçacıklar, yağmur, kıvılcım gibi öndeki efektler `B.on_katman()` üzerine çizilir.
